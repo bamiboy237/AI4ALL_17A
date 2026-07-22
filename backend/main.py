@@ -5,17 +5,23 @@ import numpy as np
 import tensorflow as tf
 from io import BytesIO
 import os
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 app = FastAPI(
     title="Skin Lesion Classification API",
     description="API for classifying skin lesions as benign or malignant using HAM10000 and DDI datasets"
 )
 
+ALLOWED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -60,8 +66,15 @@ def load_models():
 
 def preprocess_image(image: Image.Image, model_name: str = "ham10000") -> np.ndarray:
     """Preprocess image for model prediction."""
-    # All models expect 75x100 input
-    target_size = (100, 75)  # width, height for PIL
+    input_shape = models[model_name].input_shape
+    if not isinstance(input_shape, tuple) or len(input_shape) != 4:
+        raise ValueError(f"Unsupported input shape for {model_name}: {input_shape}")
+
+    _, height, width, channels = input_shape
+    if height is None or width is None or channels != 3:
+        raise ValueError(f"Unsupported input shape for {model_name}: {input_shape}")
+
+    target_size: Tuple[int, int] = (width, height)  # PIL uses (width, height)
 
     # Resize image
     image = image.resize(target_size, Image.Resampling.LANCZOS)
@@ -113,7 +126,7 @@ async def startup_event():
 async def health_check() -> Dict:
     """Health check endpoint."""
     return {
-        "status": "healthy",
+        "status": "healthy" if set(MODEL_PATHS).issubset(models) else "degraded",
         "models_loaded": list(models.keys()),
     }
 

@@ -62,7 +62,7 @@ function ImageUpload({ onImageUpload, loading, disabled }) {
       </div>
 
       <p className="helper-text">
-        JPEG, PNG, GIF, or WebP. Minimum 75 × 100 pixels.
+        JPEG, PNG, GIF, or WebP. Clear, well-lit images work best.
       </p>
     </div>
   );

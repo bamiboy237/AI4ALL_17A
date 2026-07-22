@@ -1,3 +1,13 @@
+---
+title: Skin Lesion Classification API
+emoji: 🩺
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # Skin Lesion Classifier: Fairness Audit & Web Application
 
 This project investigates whether deep-learning models can classify skin lesions with equitable accuracy across diverse skin tones, and provides a production-ready web application for interactive classification.
