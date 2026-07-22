@@ -20,7 +20,7 @@ Server runs at `http://localhost:8000`
 
 ### 1. Health Check
 ```
-GET /health
+GET /api/health
 ```
 Verify server is running and models are loaded.
 
@@ -34,7 +34,7 @@ Verify server is running and models are loaded.
 
 ### 2. Get Available Models
 ```
-GET /models
+GET /api/models
 ```
 Get information about available models and their classes.
 
@@ -59,7 +59,7 @@ Get information about available models and their classes.
 
 ### 3. Single Image Prediction
 ```
-POST /predict
+POST /api/predict
 ```
 Classify a single skin lesion image.
 
@@ -69,7 +69,7 @@ Classify a single skin lesion image.
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/predict" \
+curl -X POST "http://localhost:8000/api/predict" \
   -F "file=@lesion.jpg" \
   -F "model=ham10000"
 ```
@@ -96,7 +96,7 @@ curl -X POST "http://localhost:8000/predict" \
 
 ### 4. Batch Image Prediction
 ```
-POST /predict-batch
+POST /api/predict-batch
 ```
 Classify multiple images at once.
 
@@ -106,7 +106,7 @@ Classify multiple images at once.
 
 **cURL Example:**
 ```bash
-curl -X POST "http://localhost:8000/predict-batch" \
+curl -X POST "http://localhost:8000/api/predict-batch" \
   -F "files=@image1.jpg" \
   -F "files=@image2.jpg" \
   -F "model=ham10000"
@@ -139,7 +139,7 @@ curl -X POST "http://localhost:8000/predict-batch" \
 ## Model Information
 
 ### HAM10000 Model
-- **Input**: 224x224 RGB image, normalized [0, 1]
+- **Input**: RGB image resized to the saved model's input shape, normalized [0, 1]
 - **Output**: 7 class probabilities
 - **Classes**:
   - 0: Melanoma (MALIGNANT) 
@@ -155,7 +155,7 @@ curl -X POST "http://localhost:8000/predict-batch" \
 - Benign: Classes 1, 4, 5, 6 (everything else)
 
 ### DDI Model
-- **Input**: 224x224 RGB image, normalized [0, 1]
+- **Input**: RGB image resized to the saved model's input shape, normalized [0, 1]
 - **Output**: 2 class probabilities
 - **Classes**:
   - 0: Melanoma (MALIGNANT) 
@@ -174,10 +174,10 @@ MAX_UPLOAD_SIZE=10485760  # Max file size in bytes (10MB)
 
 ## Image Processing Pipeline
 
-1. **Validation**: Check file type and size
+1. **Validation**: Check file type and enforce a 4.5 MB request limit
 2. **Load**: Open with PIL
 3. **Convert**: Ensure RGB color space
-4. **Resize**: 224x224 using LANCZOS interpolation
+4. **Resize**: Match the loaded model's input shape using LANCZOS interpolation
 5. **Normalize**: Scale to [0, 1]
 6. **Batch**: Add batch dimension → (1, 224, 224, 3)
 7. **Predict**: Run through model
@@ -242,7 +242,7 @@ import requests
 # Single prediction
 with open('test.jpg', 'rb') as f:
     response = requests.post(
-        'http://localhost:8000/predict',
+        'http://localhost:8000/api/predict',
         files={'file': f},
         params={'model': 'ham10000'}
     )

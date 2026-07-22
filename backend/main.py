@@ -1,10 +1,12 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
 import numpy as np
 import tensorflow as tf
 from io import BytesIO
+import gc
 import os
+from threading import Lock
 from typing import Dict, List, Tuple
 
 app = FastAPI(
@@ -31,6 +33,9 @@ MODEL_PATHS = {
     "ham10000": os.path.join(BASE_DIR, "ham10000_cnn_improved.keras"),
     "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
 }
+API_PREFIX = "/api"
+MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", "4500000"))
+MODEL_LOCK = Lock()
 
 HAM10000_CLASSES = {
     0: "Melanoma",
@@ -50,18 +55,24 @@ DDI_CLASSES = {
 models = {}
 
 
-def load_models():
-    """Load all pre-trained models."""
-    global models
-    for model_name, model_path in MODEL_PATHS.items():
-        if os.path.exists(model_path):
-            try:
-                models[model_name] = tf.keras.models.load_model(model_path)
-                print(f"✓ Loaded {model_name} model")
-            except Exception as e:
-                print(f"✗ Failed to load {model_name} model: {str(e)}")
-        else:
-            print(f"✗ Model file not found: {model_path}")
+def load_model(model_name: str):
+    """Load one model, releasing any previously loaded model first."""
+    if model_name not in MODEL_PATHS:
+        raise ValueError(f"Unknown model: {model_name}")
+
+    if model_name in models:
+        return models[model_name]
+
+    model_path = MODEL_PATHS[model_name]
+    if not os.path.exists(model_path):
+        raise FileNotFoundError(f"Model file not found: {model_path}")
+
+    models.clear()
+    tf.keras.backend.clear_session()
+    gc.collect()
+    models[model_name] = tf.keras.models.load_model(model_path)
+    print(f"✓ Loaded {model_name} model")
+    return models[model_name]
 
 
 def preprocess_image(image: Image.Image, model_name: str = "ham10000") -> np.ndarray:
@@ -116,26 +127,23 @@ def get_benign_malignant_class(model_name: str, predictions: np.ndarray) -> tupl
         return (classification, confidence)
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Load models on startup."""
-    load_models()
-
-
-@app.get("/health")
+@app.get(f"{API_PREFIX}/health")
 async def health_check() -> Dict:
     """Health check endpoint."""
     return {
-        "status": "healthy" if set(MODEL_PATHS).issubset(models) else "degraded",
+        "status": "healthy",
         "models_loaded": list(models.keys()),
+        "available_models": list(MODEL_PATHS.keys()),
+        "model_loading": "lazy",
     }
 
 
-@app.get("/models")
+@app.get(f"{API_PREFIX}/models")
 async def get_available_models() -> Dict:
     """Get list of available models."""
     return {
-        "available_models": list(models.keys()),
+        "available_models": list(MODEL_PATHS.keys()),
+        "loaded_models": list(models.keys()),
         "models": {
             "ham10000": {
                 "name": "HAM10000 CNN",
@@ -151,10 +159,30 @@ async def get_available_models() -> Dict:
     }
 
 
-@app.post("/predict")
+async def read_upload(file: UploadFile) -> Image.Image:
+    """Validate and decode an uploaded image within Vercel's body-size limit."""
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=415, detail="Upload an image file.")
+
+    contents = await file.read(MAX_UPLOAD_BYTES + 1)
+    if len(contents) > MAX_UPLOAD_BYTES:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Image must be {MAX_UPLOAD_BYTES // 1_000_000} MB or smaller.",
+        )
+
+    try:
+        with Image.open(BytesIO(contents)) as image:
+            image.verify()
+        return Image.open(BytesIO(contents))
+    except Exception as error:
+        raise HTTPException(status_code=400, detail="Upload a valid image file.") from error
+
+
+@app.post(f"{API_PREFIX}/predict")
 async def predict(
     file: UploadFile = File(...),
-    model: str = "ham10000"
+    model: str = Form("ham10000"),
 ) -> Dict:
     """
     Predict if a skin lesion is benign or malignant.
@@ -166,22 +194,17 @@ async def predict(
     Returns:
         Classification result with confidence scores
     """
-    if model not in models:
+    if model not in MODEL_PATHS:
         raise HTTPException(
-            status_code=400,
-            detail=f"Model '{model}' not loaded. Available: {list(models.keys())}"
+            status_code=400, detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}"
         )
 
     try:
-        # Read image
-        contents = await file.read()
-        image = Image.open(BytesIO(contents))
-
-        # Preprocess
-        processed_image = preprocess_image(image, model_name=model)
-
-        # Predict
-        predictions = models[model].predict(processed_image, verbose=0)
+        image = await read_upload(file)
+        with MODEL_LOCK:
+            loaded_model = load_model(model)
+            processed_image = preprocess_image(image, model_name=model)
+            predictions = loaded_model.predict(processed_image, verbose=0)
 
         # Get classification
         classification, confidence = get_benign_malignant_class(model, predictions)
@@ -202,30 +225,34 @@ async def predict(
             "warning": "This prediction should not be used for medical diagnosis. Consult a dermatologist for professional evaluation.",
         }
 
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Error processing image: {str(e)}")
+    except HTTPException:
+        raise
+    except (FileNotFoundError, OSError) as error:
+        raise HTTPException(status_code=503, detail="The selected model is unavailable.") from error
+    except Exception as error:
+        raise HTTPException(status_code=400, detail="Error processing image.") from error
 
 
-@app.post("/predict-batch")
+@app.post(f"{API_PREFIX}/predict-batch")
 async def predict_batch(
     files: List[UploadFile] = File(...),
-    model: str = "ham10000"
+    model: str = Form("ham10000"),
 ) -> Dict:
     """Process multiple images at once."""
-    if model not in models:
+    if model not in MODEL_PATHS:
         raise HTTPException(
-            status_code=400,
-            detail=f"Model '{model}' not loaded. Available: {list(models.keys())}"
+            status_code=400, detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}"
         )
 
     results = []
 
     for file in files:
         try:
-            contents = await file.read()
-            image = Image.open(BytesIO(contents))
-            processed_image = preprocess_image(image, model_name=model)
-            predictions = models[model].predict(processed_image, verbose=0)
+            image = await read_upload(file)
+            with MODEL_LOCK:
+                loaded_model = load_model(model)
+                processed_image = preprocess_image(image, model_name=model)
+                predictions = loaded_model.predict(processed_image, verbose=0)
 
             classification, confidence = get_benign_malignant_class(model, predictions)
 
@@ -242,10 +269,10 @@ async def predict_batch(
                 "detailed_predictions": detailed_predictions,
             })
 
-        except Exception as e:
+        except Exception:
             results.append({
                 "filename": file.filename,
-                "error": str(e),
+                "error": "Error processing image.",
             })
 
     return {

@@ -8,7 +8,9 @@ import About from './pages/About';
 import Sources from './pages/Sources';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+const API_URL = process.env.REACT_APP_API_URL || (
+  process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8000/api'
+);
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');

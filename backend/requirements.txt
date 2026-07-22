@@ -3,7 +3,8 @@ uvicorn==0.24.0
 python-multipart==0.0.6
 pillow==10.0.1
 numpy==1.24.3
-tensorflow==2.14.0
+# Vercel's Python runtime begins at Python 3.12; TensorFlow 2.16 supports it.
+tensorflow-cpu==2.16.1
 pydantic==2.4.2
 pydantic-settings==2.0.3
 python-dotenv==1.0.0

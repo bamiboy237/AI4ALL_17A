@@ -1,13 +1,3 @@
----
-title: Skin Lesion Classification API
-emoji: 🩺
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # Skin Lesion Classifier: Fairness Audit & Web Application
 
 This project investigates whether deep-learning models can classify skin lesions with equitable accuracy across diverse skin tones, and provides a production-ready web application for interactive classification.
@@ -103,14 +93,14 @@ AI4ALL_17A/
   - Dermatofibroma (BENIGN)
   - Vascular lesion (BENIGN)
 - **Dataset**: 10,000 dermoscopy images
-- **Input**: 224x224 RGB image
+- **Input**: RGB image resized to the saved model's input shape at inference time
 
 ### DDI CNN
 - **Classes**: 2 categories
   - Melanoma (MALIGNANT) 
   - Non-melanoma (BENIGN)
 - **Dataset**: Diverse Dermatology Images
-- **Input**: 224x224 RGB image
+- **Input**: RGB image resized to the saved model's input shape at inference time
 
 ## Features
 
@@ -129,10 +119,10 @@ Comprehensive medical disclaimers
 
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| GET | `/health` | Health check |
-| GET | `/models` | Available models info |
-| POST | `/predict` | Single image prediction |
-| POST | `/predict-batch` | Batch predictions |
+| GET | `/api/health` | Health check |
+| GET | `/api/models` | Available models info |
+| POST | `/api/predict` | Single image prediction |
+| POST | `/api/predict-batch` | Batch predictions |
 
 See [backend/README.md](backend/README.md) for detailed API documentation.
 
@@ -217,10 +207,12 @@ npm start
 
 ## Deployment
 
-### Docker Support (Coming Soon)
-```bash
-docker-compose up
-```
+### Vercel
+
+The frontend and FastAPI API deploy together on Vercel. Enable Large Functions if
+prompted, because TensorFlow and the model files exceed the standard function bundle.
+The API is available beneath `/api`, and the frontend uses that same-origin path in
+production.
 
 ### Production Checklist
 - [ ] Update backend CORS_ORIGINS to specific domains

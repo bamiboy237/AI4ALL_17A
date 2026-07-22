@@ -21,7 +21,7 @@ Frontend runs at `http://localhost:3000`
 
 ### .env File
 ```
-REACT_APP_API_URL=http://localhost:8000
+REACT_APP_API_URL=http://localhost:8000/api
 REACT_APP_ENV=development
 ```
 
@@ -67,8 +67,7 @@ Results display showing:
 - WebP
 
  **Image Requirements**
-- Minimum: 224x224 pixels
-- Maximum: 5MB
+- Maximum: 4.5MB
 - Clear, well-lit dermoscopy image preferred
 
  **User Experience**
@@ -103,13 +102,13 @@ The app communicates with the FastAPI backend:
 
 ### Endpoints Used
 
-**GET /models**
+**GET /api/models**
 ```javascript
 // Fetch available models on app load
 const response = await axios.get(`${API_URL}/models`);
 ```
 
-**POST /predict**
+**POST /api/predict**
 ```javascript
 // Upload image and get prediction
 const formData = new FormData();
@@ -153,7 +152,7 @@ npm test
 **Cannot connect to backend**
 ```
 Check REACT_APP_API_URL in .env
-Verify backend is running: http://localhost:8000/health
+Verify backend is running: http://localhost:8000/api/health
 ```
 
 **CORS errors in console**
@@ -214,7 +213,7 @@ Add frontend URL to backend .env CORS_ORIGINS
 
 ### Development
 ```
-REACT_APP_API_URL=http://localhost:8000
+REACT_APP_API_URL=http://localhost:8000/api
 REACT_APP_ENV=development
 ```
 
