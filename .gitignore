@@ -1,0 +1,56 @@
+# Frontend
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+frontend/build/
+frontend/dist/
+
+# Backend
+backend/__pycache__/
+backend/*.py[cod]
+backend/*$py.class
+backend/*.so
+backend/.Python
+backend/env/
+backend/venv/
+backend/.venv
+backend/.env
+backend/.env.local
+backend/__pycache__
+backend/.pytest_cache/
+backend/*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Models (optional - only ignore if storing separately)
+# *.keras
+
+#
+.claude
+
+# 
+DEPLOYMENT.md
+DEPLOY_VERCEL.md
+FINAL_SUMMARY.md
+PROJECT_SUMMARY.md
+run_local.md
