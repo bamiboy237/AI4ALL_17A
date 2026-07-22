@@ -54,3 +54,5 @@ DEPLOY_VERCEL.md
 FINAL_SUMMARY.md
 PROJECT_SUMMARY.md
 run_local.md
+.vercel
+.env*
