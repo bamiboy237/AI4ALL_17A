@@ -235,6 +235,6 @@ Educational use only. See LICENSE file for details.
 
 ---
 
-**Created for**: AI4ALL 
+**Created for**: AI4ALL Ignite 
 **Last Updated**: July 2024
 **Status**: Production Ready
