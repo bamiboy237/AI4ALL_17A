@@ -33,7 +33,8 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATHS = {
     "ham10000": os.path.join(BASE_DIR, "ham10000_cnn_improved.keras"),
-    "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
+    # DDI is disabled until its 16-class training label mapping is restored.
+    # "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
 }
 FRONTEND_BUILD_DIR = Path(BASE_DIR) / "frontend" / "build"
 API_PREFIX = "/api"
@@ -152,11 +153,6 @@ async def get_available_models() -> Dict:
                 "name": "HAM10000 CNN",
                 "dataset": "HAM10000 (10,000 skin images)",
                 "classes": len(HAM10000_CLASSES),
-            },
-            "ddi": {
-                "name": "DDI CNN",
-                "dataset": "DDI (Dermoscopy Dataset)",
-                "classes": len(DDI_CLASSES),
             },
         },
     }
