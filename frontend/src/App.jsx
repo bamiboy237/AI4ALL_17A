@@ -80,7 +80,7 @@ function App() {
           <main className="main-content">
             <div className="container">
               <header className="header">
-                <h1>Skin Lesion Classifier</h1>
+                <h1>DermAware</h1>
                 <p className="subtitle">Clinical reference tool</p>
               </header>
 

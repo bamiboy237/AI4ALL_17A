@@ -1,4 +1,4 @@
-# Skin Lesion Classifier - Backend API
+# DermAware - Backend API
 
 FastAPI server for skin lesion classification using pre-trained Keras models.
 

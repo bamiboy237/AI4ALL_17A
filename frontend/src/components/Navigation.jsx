@@ -17,7 +17,7 @@ function Navigation({ currentPage, onNavigate }) {
             className="nav-logo"
             onClick={() => handleNavClick('home')}
           >
-            Skin Lesion Classifier
+            DermAware
           </button>
         </div>
 

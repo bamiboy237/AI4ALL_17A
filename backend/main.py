@@ -12,7 +12,7 @@ from typing import Dict, List, Tuple
 from pathlib import Path
 
 app = FastAPI(
-    title="Skin Lesion Classification API",
+    title="DermAware API",
     description="API for classifying skin lesions as benign or malignant using HAM10000 and DDI datasets"
 )
 

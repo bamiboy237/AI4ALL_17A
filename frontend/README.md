@@ -1,4 +1,4 @@
-# Skin Lesion Classifier - Frontend
+# DermAware - Frontend
 
 React web application for classifying skin lesions using AI models.
 

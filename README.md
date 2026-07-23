@@ -1,4 +1,4 @@
-# Skin Lesion Classifier: Fairness Audit & Web Application
+# DermAware: Fairness Audit & Web Application
 
 This project investigates whether deep-learning models can classify skin lesions with equitable accuracy across diverse skin tones, and provides a production-ready web application for interactive classification.
 
