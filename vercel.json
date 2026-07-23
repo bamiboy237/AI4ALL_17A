@@ -1,28 +1,16 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "cd frontend && npm ci && npm run build",
-  "outputDirectory": "frontend/build",
   "functions": {
     "api/index.py": {
-      "includeFiles": "{ham10000_cnn_improved.keras,ddi_cnn_improved.keras}",
-      "excludeFiles": "{frontend/**,ham_ann_baseline.keras,backend/tests/**}"
+      "includeFiles": "{ham10000_cnn_improved.keras,ddi_cnn_improved.keras,frontend/build/**}",
+      "excludeFiles": "{frontend/node_modules/**,frontend/src/**,frontend/public/**,ham_ann_baseline.keras,backend/tests/**}"
     }
   },
   "routes": [
     {
-      "src": "/api",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "/api/index.py"
     }
   ]
 }

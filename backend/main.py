@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from PIL import Image
 import numpy as np
 import tensorflow as tf
@@ -8,6 +9,7 @@ import gc
 import os
 from threading import Lock
 from typing import Dict, List, Tuple
+from pathlib import Path
 
 app = FastAPI(
     title="Skin Lesion Classification API",
@@ -33,6 +35,7 @@ MODEL_PATHS = {
     "ham10000": os.path.join(BASE_DIR, "ham10000_cnn_improved.keras"),
     "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
 }
+FRONTEND_BUILD_DIR = Path(BASE_DIR) / "frontend" / "build"
 API_PREFIX = "/api"
 MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", "4500000"))
 MODEL_LOCK = Lock()
@@ -282,6 +285,25 @@ async def predict_batch(
         "results": results,
         "warning": "These predictions should not be used for medical diagnosis. Consult a dermatologist for professional evaluation.",
     }
+
+
+@app.get("/{requested_path:path}", include_in_schema=False)
+async def serve_frontend(requested_path: str):
+    """Serve the React production build after API routes have been matched."""
+    index_file = FRONTEND_BUILD_DIR / "index.html"
+    requested_file = (FRONTEND_BUILD_DIR / requested_path).resolve()
+
+    if (
+        requested_path
+        and requested_file.is_relative_to(FRONTEND_BUILD_DIR.resolve())
+        and requested_file.is_file()
+    ):
+        return FileResponse(requested_file)
+
+    if index_file.is_file():
+        return FileResponse(index_file)
+
+    raise HTTPException(status_code=404, detail="Frontend build is unavailable.")
 
 
 if __name__ == "__main__":
