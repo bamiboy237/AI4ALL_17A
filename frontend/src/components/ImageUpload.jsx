@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import './ImageUpload.css';
 
-function ImageUpload({ onImageUpload, loading, disabled }) {
+function ImageUpload({ onImageUpload, loading }) {
   const fileInputRef = useRef(null);
 
   const handleFileSelect = (event) => {
@@ -50,7 +50,7 @@ function ImageUpload({ onImageUpload, loading, disabled }) {
           type="file"
           accept="image/*"
           onChange={handleFileSelect}
-          disabled={loading || disabled}
+          disabled={loading}
           style={{ display: 'none' }}
         />
 

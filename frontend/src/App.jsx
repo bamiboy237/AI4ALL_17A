@@ -94,7 +94,6 @@ function App() {
                 <ImageUpload
                   onImageUpload={handleImageUpload}
                   loading={loading}
-                  disabled={!availableModels}
                 />
 
                 {uploadedImage && !loading && (
