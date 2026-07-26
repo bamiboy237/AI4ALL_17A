@@ -1,5 +1,5 @@
-import React from 'react';
-import './ModelSelector.css';
+import React from "react";
+import "./ModelSelector.css";
 
 function ModelSelector({ selectedModel, onModelChange, availableModels }) {
   if (!availableModels) {
@@ -15,11 +15,11 @@ function ModelSelector({ selectedModel, onModelChange, availableModels }) {
         {Object.entries(models).map(([key, model]) => (
           <button
             key={key}
-            className={`segment ${selectedModel === key ? 'active' : ''}`}
+            className={`segment ${selectedModel === key ? "active" : ""}`}
             onClick={() => onModelChange(key)}
           >
             <span className="segment-name">{model.name}</span>
-            <span className="segment-hint">{key === 'ham10000' ? '7 classes' : '2 classes'}</span>
+            <span className="segment-hint">{model.classes} classes</span>
           </button>
         ))}
       </div>

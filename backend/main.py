@@ -1,19 +1,20 @@
-from fastapi import FastAPI, File, Form, UploadFile, HTTPException
+import gc
+import os
+from io import BytesIO
+from pathlib import Path
+from threading import Lock
+from typing import Dict, List, Tuple
+
+import numpy as np
+import tensorflow as tf
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from PIL import Image
-import numpy as np
-import tensorflow as tf
-from io import BytesIO
-import gc
-import os
-from threading import Lock
-from typing import Dict, List, Tuple
-from pathlib import Path
 
 app = FastAPI(
     title="DermAware API",
-    description="API for classifying skin lesions as benign or malignant using HAM10000 and DDI datasets"
+    description="API for classifying skin lesions as benign or malignant using HAM10000 and DDI datasets",
 )
 
 ALLOWED_ORIGINS = [
@@ -33,6 +34,7 @@ app.add_middleware(
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATHS = {
     "ham10000": os.path.join(BASE_DIR, "ham10000_cnn_improved.keras"),
+    "ham10000_b0": os.path.join(BASE_DIR, "ham10000_efficientnet_b0.keras"),
     # DDI is disabled until its 16-class training label mapping is restored.
     # "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
 }
@@ -48,7 +50,7 @@ HAM10000_CLASSES = {
     3: "Actinic keratosis",
     4: "Benign keratosis",
     5: "Dermatofibroma",
-    6: "Vascular lesion"
+    6: "Vascular lesion",
 }
 
 DDI_CLASSES = {
@@ -95,8 +97,8 @@ def preprocess_image(image: Image.Image, model_name: str = "ham10000") -> np.nda
     image = image.resize(target_size, Image.Resampling.LANCZOS)
 
     # Convert to RGB if grayscale
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
+    if image.mode != "RGB":
+        image = image.convert("RGB")
 
     # Convert to numpy array and normalize
     img_array = np.array(image, dtype=np.float32)
@@ -117,16 +119,21 @@ def get_benign_malignant_class(model_name: str, predictions: np.ndarray) -> tupl
         # DDI model directly outputs benign (1) or malignant (0)
         pred_class = np.argmax(predictions[0])
         confidence = float(predictions[0][pred_class])
-        return ("Melanoma (Malignant)" if pred_class == 0 else "Non-melanoma (Benign)", confidence)
+        return (
+            "Melanoma (Malignant)" if pred_class == 0 else "Non-melanoma (Benign)",
+            confidence,
+        )
 
-    elif model_name == "ham10000":
+    elif model_name in ("ham10000", "ham10000_b0"):
         # HAM10000: Classes 0, 2, 3 are malignant; 1, 4, 5, 6 are benign
         malignant_classes = {0, 2, 3}  # Melanoma, BCC, Actinic keratosis
         pred_class = np.argmax(predictions[0])
         confidence = float(predictions[0][pred_class])
 
         is_malignant = pred_class in malignant_classes
-        classification = "Malignant (Requires Medical Attention)" if is_malignant else "Benign"
+        classification = (
+            "Malignant (Requires Medical Attention)" if is_malignant else "Benign"
+        )
 
         return (classification, confidence)
 
@@ -154,6 +161,11 @@ async def get_available_models() -> Dict:
                 "dataset": "HAM10000 (10,000 skin images)",
                 "classes": len(HAM10000_CLASSES),
             },
+            "ham10000_b0": {
+                "name": "EfficientNet-B0",
+                "dataset": "HAM10000 (10,000 skin images)",
+                "classes": len(HAM10000_CLASSES),
+            },
         },
     }
 
@@ -175,7 +187,9 @@ async def read_upload(file: UploadFile) -> Image.Image:
             image.verify()
         return Image.open(BytesIO(contents))
     except Exception as error:
-        raise HTTPException(status_code=400, detail="Upload a valid image file.") from error
+        raise HTTPException(
+            status_code=400, detail="Upload a valid image file."
+        ) from error
 
 
 @app.post(f"{API_PREFIX}/predict")
@@ -195,7 +209,8 @@ async def predict(
     """
     if model not in MODEL_PATHS:
         raise HTTPException(
-            status_code=400, detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}"
+            status_code=400,
+            detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}",
         )
 
     try:
@@ -227,9 +242,13 @@ async def predict(
     except HTTPException:
         raise
     except (FileNotFoundError, OSError) as error:
-        raise HTTPException(status_code=503, detail="The selected model is unavailable.") from error
+        raise HTTPException(
+            status_code=503, detail="The selected model is unavailable."
+        ) from error
     except Exception as error:
-        raise HTTPException(status_code=400, detail="Error processing image.") from error
+        raise HTTPException(
+            status_code=400, detail="Error processing image."
+        ) from error
 
 
 @app.post(f"{API_PREFIX}/predict-batch")
@@ -240,7 +259,8 @@ async def predict_batch(
     """Process multiple images at once."""
     if model not in MODEL_PATHS:
         raise HTTPException(
-            status_code=400, detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}"
+            status_code=400,
+            detail=f"Unknown model. Available: {list(MODEL_PATHS.keys())}",
         )
 
     results = []
@@ -261,18 +281,22 @@ async def predict_batch(
                 for i in range(len(predictions[0]))
             }
 
-            results.append({
-                "filename": file.filename,
-                "classification": classification,
-                "confidence": confidence,
-                "detailed_predictions": detailed_predictions,
-            })
+            results.append(
+                {
+                    "filename": file.filename,
+                    "classification": classification,
+                    "confidence": confidence,
+                    "detailed_predictions": detailed_predictions,
+                }
+            )
 
         except Exception:
-            results.append({
-                "filename": file.filename,
-                "error": "Error processing image.",
-            })
+            results.append(
+                {
+                    "filename": file.filename,
+                    "error": "Error processing image.",
+                }
+            )
 
     return {
         "status": "success",
@@ -304,4 +328,5 @@ async def serve_frontend(requested_path: str):
 
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
