@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import Navigation from './components/Navigation';
 import ImageUpload from './components/ImageUpload';
@@ -12,6 +12,17 @@ const API_URL = process.env.REACT_APP_API_URL || (
   process.env.NODE_ENV === 'production' ? '/api' : 'http://localhost:8000/api'
 );
 
+const AVAILABLE_MODELS = {
+  ham10000: {
+    name: 'HAM10000 CNN',
+    classes: 7,
+  },
+  ham10000_b0: {
+    name: 'EfficientNet-B0',
+    classes: 7,
+  },
+};
+
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [selectedModel, setSelectedModel] = useState('ham10000');
@@ -19,36 +30,6 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [availableModels, setAvailableModels] = useState(null);
-  const [modelsError, setModelsError] = useState(null);
-  const [modelsRequest, setModelsRequest] = useState(0);
-
-  useEffect(() => {
-    let isCurrentRequest = true;
-
-    const fetchModels = async () => {
-      setAvailableModels(null);
-      setModelsError(null);
-
-      try {
-        const response = await axios.get(`${API_URL}/models`);
-        if (isCurrentRequest) {
-          setAvailableModels(response.data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch models:', err);
-        if (isCurrentRequest) {
-          setModelsError('Unable to load model options.');
-        }
-      }
-    };
-
-    fetchModels();
-
-    return () => {
-      isCurrentRequest = false;
-    };
-  }, [modelsRequest]);
 
   const handleImageUpload = async (file) => {
     setLoading(true);
@@ -105,9 +86,7 @@ function App() {
                 <ModelSelector
                   selectedModel={selectedModel}
                   onModelChange={setSelectedModel}
-                  availableModels={availableModels}
-                  error={modelsError}
-                  onRetry={() => setModelsRequest((request) => request + 1)}
+                  models={AVAILABLE_MODELS}
                 />
 
                 <ImageUpload
