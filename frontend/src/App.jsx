@@ -20,18 +20,35 @@ function App() {
   const [error, setError] = useState(null);
   const [uploadedImage, setUploadedImage] = useState(null);
   const [availableModels, setAvailableModels] = useState(null);
+  const [modelsError, setModelsError] = useState(null);
+  const [modelsRequest, setModelsRequest] = useState(0);
 
   useEffect(() => {
+    let isCurrentRequest = true;
+
     const fetchModels = async () => {
+      setAvailableModels(null);
+      setModelsError(null);
+
       try {
         const response = await axios.get(`${API_URL}/models`);
-        setAvailableModels(response.data);
+        if (isCurrentRequest) {
+          setAvailableModels(response.data);
+        }
       } catch (err) {
         console.error('Failed to fetch models:', err);
+        if (isCurrentRequest) {
+          setModelsError('Unable to load model options.');
+        }
       }
     };
+
     fetchModels();
-  }, []);
+
+    return () => {
+      isCurrentRequest = false;
+    };
+  }, [modelsRequest]);
 
   const handleImageUpload = async (file) => {
     setLoading(true);
@@ -89,6 +106,8 @@ function App() {
                   selectedModel={selectedModel}
                   onModelChange={setSelectedModel}
                   availableModels={availableModels}
+                  error={modelsError}
+                  onRetry={() => setModelsRequest((request) => request + 1)}
                 />
 
                 <ImageUpload
