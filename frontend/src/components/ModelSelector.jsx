@@ -1,9 +1,32 @@
 import React from "react";
 import "./ModelSelector.css";
 
-function ModelSelector({ selectedModel, onModelChange, availableModels }) {
+function ModelSelector({
+  selectedModel,
+  onModelChange,
+  availableModels,
+  error,
+  onRetry,
+}) {
+  if (error) {
+    return (
+      <div className="model-selector model-selector-error" role="alert">
+        <span>{error}</span>
+        <button type="button" onClick={onRetry}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   if (!availableModels) {
-    return <div className="model-selector skeleton" />;
+    return (
+      <div
+        className="model-selector skeleton"
+        aria-label="Loading model options"
+        role="status"
+      />
+    );
   }
 
   const models = availableModels.models || {};
