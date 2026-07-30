@@ -8,9 +8,11 @@ function ModelSelector({ selectedModel, onModelChange, models }) {
       <div className="segmented-control">
         {Object.entries(models).map(([key, model]) => (
           <button
+            type="button"
             key={key}
             className={`segment ${selectedModel === key ? "active" : ""}`}
             onClick={() => onModelChange(key)}
+            aria-pressed={selectedModel === key}
           >
             <span className="segment-name">{model.name}</span>
             <span className="segment-hint">{model.classes} classes</span>

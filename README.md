@@ -1,240 +1,177 @@
-# DermAware: Fairness Audit & Web Application
+# DermAware
 
-This project investigates whether deep-learning models can classify skin lesions with equitable accuracy across diverse skin tones, and provides a production-ready web application for interactive classification.
+DermAware is a research prototype for skin-lesion image classification. It
+compares a custom convolutional neural network (CNN) with an EfficientNet-B0
+model on the HAM10000 dataset.
 
-## Overview
+[Open the live demo](https://ai-4-all-17-a.vercel.app)
 
-This repository contains:
-1. **Research Component**: Fairness audit across skin tones using HAM10000 and DDI datasets
-2. **Web Application**: Interactive React + FastAPI app for skin lesion classification
-3. **Pre-trained Models**: Keras CNN models optimized for HAM10000 and DDI datasets
+> [!CAUTION]
+> DermAware is not a medical device. It is not clinically validated. Do not
+> use its output for diagnosis or treatment. Contact a qualified healthcare
+> professional if you have a concern about a skin lesion.
 
-## Research Question
+## Project goal
 
-Can pretrained computer-vision models classify skin lesions fairly across light and dark skin tones, or does underrepresentation in dermatology datasets limit their performance?
+Dermatology datasets often underrepresent darker skin tones. This can cause a
+model to work differently across population groups.
 
-## Research Approach
+This project asks:
 
-- Train and fine-tune CNN models using HAM10000
-- Benchmark EfficientNetB0 and EfficientNetB3 on HAM10000 and ISIC 2019
-- Evaluate accuracy, precision, recall, macro F1, and balanced accuracy
-- Use Diverse Dermatology Images (DDI) to investigate performance across skin tones
-- Explore data augmentation and class-balancing methods to reduce disparities
+> Can a skin-lesion classifier maintain useful recall across skin tones, or
+> does dataset imbalance limit its performance?
 
-## Quick Start: Web Application
+The research uses two datasets:
 
-### Prerequisites
-- Python 3.8+
-- Node.js 14+
-- 4GB+ RAM
+- **HAM10000** supplies 10,015 dermatoscopic images in seven lesion classes.
+- **Diverse Dermatology Images (DDI)** supplies clinical images from diverse
+  skin tones for fairness analysis.
 
-### One-Command Setup (macOS/Linux)
-```bash
-bash start.sh
+The live application currently serves two HAM10000 models. DDI inference is
+disabled until the team restores and verifies the model's 16-class label
+mapping.
+
+## Current capabilities
+
+- Upload one JPEG, PNG, GIF, or WebP image up to 4.5 MB.
+- Select the custom HAM10000 CNN or EfficientNet-B0.
+- View the predicted lesion class and the model score.
+- View the five highest class scores.
+- Use the same React and FastAPI application locally or on Vercel.
+
+## System design
+
+| Layer | Technology | Responsibility |
+| --- | --- | --- |
+| Web client | React 18 | Image selection, model selection, and result display |
+| API | FastAPI | Validation, preprocessing, inference, and response formatting |
+| Models | TensorFlow/Keras | Seven-class HAM10000 classification |
+| Hosting | Vercel | React build and Python API |
+
+The API loads a model only when a request needs it. It keeps one model in
+memory at a time to control memory use.
+
+## Repository layout
+
+```text
+.
+├── api/
+│   └── index.py              # Vercel entry point
+├── backend/
+│   ├── main.py               # FastAPI application
+│   ├── requirements.txt      # Python dependencies
+│   └── tests/                # Backend tests
+├── frontend/
+│   ├── public/
+│   ├── src/                  # React application
+│   ├── package.json
+│   └── package-lock.json
+├── *.keras                   # Model files managed with Git LFS
+├── requirements.txt          # Vercel Python dependencies
+└── vercel.json               # Deployment configuration
 ```
 
-### Manual Setup
+## Run the project locally
 
-**Terminal 1 - Backend:**
+### Requirements
+
+- Python 3.12
+- Node.js 18 or later
+- Git LFS
+
+Clone the repository and download the model files:
+
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python main.py
+git clone https://github.com/bamiboy237/AI4ALL_17A.git
+cd AI4ALL_17A
+git lfs install
+git lfs pull
 ```
 
-**Terminal 2 - Frontend:**
+Start the API:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r backend/requirements.txt
+python backend/main.py
+```
+
+Start the web client in a second terminal:
+
 ```bash
 cd frontend
-npm install
+cp .env.example .env
+npm ci
 npm start
 ```
 
-Open browser to `http://localhost:3000`
+Open `http://localhost:3000`.
 
-### Windows Setup
-```bash
-start.bat
-```
+## API
 
-For detailed setup instructions, see [SETUP.md](SETUP.md)
-
-## Project Structure
-
-```
-AI4ALL_17A/
-├── backend/                        # FastAPI server
-│   ├── main.py                    # API endpoints
-│   ├── requirements.txt           # Python dependencies
-│   └── README.md                  # Backend documentation
-├── frontend/                       # React application
-│   ├── src/
-│   │   ├── App.jsx               # Main component
-│   │   └── components/           # UI components
-│   ├── package.json              # Node dependencies
-│   └── README.md                 # Frontend documentation
-├── ham10000_cnn_improved.keras    # Pre-trained HAM10000 model
-├── ddi_cnn_improved.keras         # Pre-trained DDI model
-├── ham_ann_baseline.keras         # Baseline model
-├── SETUP.md                       # Setup guide
-└── README.md                      # This file
-```
-
-## Pre-trained Models
-
-### HAM10000 CNN
-- **Classes**: 7 lesion types
-  - Melanoma (MALIGNANT) 
-  - Melanocytic nevus (BENIGN)
-  - Basal cell carcinoma (MALIGNANT) 
-  - Actinic keratosis (MALIGNANT) 
-  - Benign keratosis (BENIGN)
-  - Dermatofibroma (BENIGN)
-  - Vascular lesion (BENIGN)
-- **Dataset**: 10,000 dermoscopy images
-- **Input**: RGB image resized to the saved model's input shape at inference time
-
-### DDI CNN
-- **Classes**: 2 categories
-  - Melanoma (MALIGNANT) 
-  - Non-melanoma (BENIGN)
-- **Dataset**: Diverse Dermatology Images
-- **Input**: RGB image resized to the saved model's input shape at inference time
-
-## Features
-
-Drag-and-drop image upload
-Real-time image validation
-Multiple model selection
-Confidence score display
-Detailed class probabilities
-Professional medical UI
-Mobile-responsive design
-Comprehensive medical disclaimers
-
-## API Endpoints
-
-### Backend (FastAPI)
+All endpoints use the `/api` prefix.
 
 | Method | Endpoint | Purpose |
-|--------|----------|---------|
-| GET | `/api/health` | Health check |
-| GET | `/api/models` | Available models info |
-| POST | `/api/predict` | Single image prediction |
-| POST | `/api/predict-batch` | Batch predictions |
+| --- | --- | --- |
+| `GET` | `/api/health` | Return service and model status |
+| `GET` | `/api/models` | List the available models |
+| `POST` | `/api/predict` | Classify one image |
+| `POST` | `/api/predict-batch` | Classify multiple images |
 
-See [backend/README.md](backend/README.md) for detailed API documentation.
+Example:
 
-## Performance
+```bash
+curl -X POST http://localhost:8000/api/predict \
+  -F "file=@lesion.jpg" \
+  -F "model=ham10000"
+```
 
-- **Model loading**: ~10-30s (first request)
-- **Inference time**:
-  - HAM10000: 200-500ms
-  - DDI: 400-800ms
-- **Memory usage**: ~2-3GB per model
+Valid model values are `ham10000` and `ham10000_b0`.
 
-## Datasets
+## Tests
 
-- [HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
+Run the backend tests:
+
+```bash
+python -m pytest backend/tests
+```
+
+Run the frontend tests:
+
+```bash
+cd frontend
+CI=true npm test -- --runInBand
+```
+
+Build the frontend:
+
+```bash
+cd frontend
+npm run build
+```
+
+## Research limits
+
+- HAM10000 contains dermatoscopic images. A phone photo can produce unreliable
+  results.
+- A high model score does not mean that a prediction is medically correct.
+- The deployed models do not use patient history or clinical context.
+- The current application does not report validated performance by skin-tone
+  group.
+- DDI remains part of the fairness study, but its model is not active in the
+  deployed application.
+
+## Data and references
+
+- [HAM10000 dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
+- [HAM10000 paper](https://doi.org/10.1038/sdata.2018.161)
 - [Diverse Dermatology Images](https://stanfordaimi.azurewebsites.net/datasets/35866158-8196-48d8-87bf-50dca81df965)
-- [ISIC 2019](https://www.kaggle.com/datasets/andrewmvd/isic-2019)
-
-## Important Disclaimers
-
-**This is NOT a medical diagnostic tool**
-- For educational and research purposes only
-- DO NOT use for clinical decision-making
-- Always consult a qualified dermatologist
-- Predictions may be incorrect or misleading
+- [DDI paper](https://doi.org/10.1126/sciadv.abq6147)
 
 ## Team
 
-Avani Joshi, Daisy Phung, Phuong Hoang, Tigist Wujira, William Acosta Lora, Belyse Munezero, Bogning Guy-robert
+This project was developed by AI4ALL Ignite Group 17A:
 
-## Documentation
-
-- [SETUP.md](SETUP.md) - Detailed setup and troubleshooting
-- [backend/README.md](backend/README.md) - Backend API documentation
-- [frontend/README.md](frontend/README.md) - Frontend component documentation
-
-## Security
-
-Input validation (file type, size, format)
-CORS protection
-Image preprocessing pipeline
-Error handling and logging
-For production: Update CORS origins and enable HTTPS
-
-## Troubleshooting
-
-### Backend Issues
-```bash
-# Models not loading?
-pip install -r requirements.txt --upgrade
-
-# Port 8000 in use?
-# Change PORT in backend/.env
-```
-
-### Frontend Issues
-```bash
-# Dependencies missing?
-npm install
-
-# Can't reach backend?
-# Check REACT_APP_API_URL in frontend/.env
-```
-
-See [SETUP.md](SETUP.md) for more troubleshooting tips.
-
-## Development
-
-### Backend Development
-```bash
-cd backend
-source venv/bin/activate
-DEBUG=True python main.py
-```
-API docs available at `http://localhost:8000/docs`
-
-### Frontend Development
-```bash
-cd frontend
-npm start
-# Hot reload enabled
-```
-
-## Deployment
-
-### Vercel
-
-The frontend and FastAPI API deploy together on Vercel. Enable Large Functions if
-prompted, because TensorFlow and the model files exceed the standard function bundle.
-The API is available beneath `/api`, and the frontend uses that same-origin path in
-production.
-
-### Production Checklist
-- [ ] Update backend CORS_ORIGINS to specific domains
-- [ ] Enable HTTPS/TLS
-- [ ] Set DEBUG=False in backend
-- [ ] Configure rate limiting
-- [ ] Setup monitoring and logging
-- [ ] Review security settings
-
-## License
-
-Educational use only. See LICENSE file for details.
-
-## References
-
-- FastAPI: https://fastapi.tiangolo.com
-- React: https://react.dev
-- Keras/TensorFlow: https://keras.io
-- WCAG Accessibility: https://www.w3.org/WAI/WCAG21/quickref/
-
----
-
-**Created for**: AI4ALL Ignite 
-**Last Updated**: July 2024
-**Status**: Production Ready
+Avani Joshi, Daisy Phung, Phuong Hoang, Tigist Wujira, William Acosta Lora,
+Belyse Munezero, and Bogning Guy-Robert.
