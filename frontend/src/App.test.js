@@ -33,6 +33,8 @@ describe('image upload availability', () => {
     expect(fileInput.disabled).toBe(false);
     expect(container.textContent).toContain('HAM10000 CNN');
     expect(container.textContent).toContain('EfficientNet-B0');
+    expect(container.textContent).toContain('DDI CNN');
+    expect(container.textContent).toContain('16 classes');
     expect(axios.get).not.toHaveBeenCalled();
   });
 });

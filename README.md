@@ -1,79 +1,101 @@
 # DermAware
 
-DermAware is a research prototype for skin-lesion image classification. It
-compares a custom convolutional neural network (CNN) with an EfficientNet-B0
-model on the HAM10000 dataset.
+We built DermAware to investigate how dataset composition affects computer-vision models for skin-lesion categorization.
 
-[Open the live demo](https://ai-4-all-17-a.vercel.app)
+To do this, we trained three models with two datasets:
+
+- A custom CNN trained with HAM10000.
+- An EfficientNet-B0 model trained with HAM10000.
+- A custom CNN trained with Diverse Dermatology Images (DDI).
+
+[Open DermAware](https://ai-4-all-17-a.vercel.app)
 
 > [!CAUTION]
-> DermAware is not a medical device. It is not clinically validated. Do not
-> use its output for diagnosis or treatment. Contact a qualified healthcare
-> professional if you have a concern about a skin lesion.
+> DermAware is a research project, not a medical device. It does not provide a
+> diagnosis or treatment advice. Contact a qualified healthcare professional
+> if you have a concern about a skin lesion.
 
-## Project goal
+## What we are investigating
 
-Dermatology datasets often underrepresent darker skin tones. This can cause a
-model to work differently across population groups.
+Medical-image datasets do not represent every population equally. A model can
+learn this imbalance and perform differently across groups.
 
-This project asks:
+Our research question is:
 
-> Can a skin-lesion classifier maintain useful recall across skin tones, or
-> does dataset imbalance limit its performance?
+> How does dataset composition affect a CNN that categorizes skin-lesion images?
 
-The research uses two datasets:
+HAM10000 and DDI have different images and label spaces. We evaluate each model
+within its own dataset. We do not compare their test accuracy directly.
 
-- **HAM10000** supplies 10,015 dermatoscopic images in seven lesion classes.
-- **Diverse Dermatology Images (DDI)** supplies clinical images from diverse
-  skin tones for fairness analysis.
+## What the application does
 
-The live application currently serves two HAM10000 models. DDI inference is
-disabled until the team restores and verifies the model's 16-class label
-mapping.
-
-## Current capabilities
+The application lets you:
 
 - Upload one JPEG, PNG, GIF, or WebP image up to 4.5 MB.
-- Select the custom HAM10000 CNN or EfficientNet-B0.
-- View the predicted lesion class and the model score.
+- Choose one of the three trained models.
+- View the highest model score.
 - View the five highest class scores.
-- Use the same React and FastAPI application locally or on Vercel.
 
-## System design
+The application loads a model only when it receives a prediction request. It
+keeps one model in memory at a time.
 
-| Layer | Technology | Responsibility |
+## Models
+
+| Model | Training data | Output |
 | --- | --- | --- |
-| Web client | React 18 | Image selection, model selection, and result display |
-| API | FastAPI | Validation, preprocessing, inference, and response formatting |
-| Models | TensorFlow/Keras | Seven-class HAM10000 classification |
-| Hosting | Vercel | React build and Python API |
+| HAM10000 CNN | HAM10000 dermatoscopic images | 7 lesion categories |
+| EfficientNet-B0 | HAM10000 dermatoscopic images | 7 lesion categories |
+| DDI CNN | DDI clinical images | 16 project-defined disease groups |
 
-The API loads a model only when a request needs it. It keeps one model in
-memory at a time to control memory use.
+The custom CNNs use the mean and standard deviation recorded during training.
+EfficientNet-B0 performs its own input rescaling.
 
-## Repository layout
+The 16 DDI groups include an `Other or miscellaneous` output. This output
+preserves the class order used when the saved model was trained.
+
+## How a request moves through the system
+
+1. The React client checks the selected file.
+2. The client sends the image and model name to the FastAPI endpoint.
+3. The API validates and resizes the image.
+4. The API applies the preprocessing for the selected model.
+5. TensorFlow returns one score for each class.
+6. The client shows the five highest scores.
+
+| Layer | Technology |
+| --- | --- |
+| Web client | React 18 |
+| API | FastAPI |
+| Models | TensorFlow and Keras |
+| Hosting | Vercel |
+
+## Repository
 
 ```text
 .
 ├── api/
-│   └── index.py              # Vercel entry point
+│   └── index.py
 ├── backend/
-│   ├── main.py               # FastAPI application
-│   ├── requirements.txt      # Python dependencies
-│   └── tests/                # Backend tests
+│   ├── main.py
+│   ├── requirements.txt
+│   └── tests/
 ├── frontend/
 │   ├── public/
-│   ├── src/                  # React application
+│   ├── src/
 │   ├── package.json
 │   └── package-lock.json
-├── *.keras                   # Model files managed with Git LFS
-├── requirements.txt          # Vercel Python dependencies
-└── vercel.json               # Deployment configuration
+├── ddi_cnn_improved.keras
+├── ham10000_cnn_improved.keras
+├── ham10000_efficientnet_b0.keras
+├── requirements.txt
+└── vercel.json
 ```
 
-## Run the project locally
+The `.keras` files use Git LFS.
 
-### Requirements
+## Run it locally
+
+You need:
 
 - Python 3.12
 - Node.js 18 or later
@@ -97,7 +119,7 @@ python -m pip install -r backend/requirements.txt
 python backend/main.py
 ```
 
-Start the web client in a second terminal:
+Start the React client in another terminal:
 
 ```bash
 cd frontend
@@ -110,24 +132,28 @@ Open `http://localhost:3000`.
 
 ## API
 
-All endpoints use the `/api` prefix.
+All API routes use the `/api` prefix.
 
-| Method | Endpoint | Purpose |
+| Method | Route | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/health` | Return service and model status |
-| `GET` | `/api/models` | List the available models |
-| `POST` | `/api/predict` | Classify one image |
-| `POST` | `/api/predict-batch` | Classify multiple images |
+| `GET` | `/api/health` | Check the service and loaded model |
+| `GET` | `/api/models` | List available models |
+| `POST` | `/api/predict` | Process one image |
+| `POST` | `/api/predict-batch` | Process multiple images |
 
 Example:
 
 ```bash
 curl -X POST http://localhost:8000/api/predict \
   -F "file=@lesion.jpg" \
-  -F "model=ham10000"
+  -F "model=ddi"
 ```
 
-Valid model values are `ham10000` and `ham10000_b0`.
+Valid model values are:
+
+- `ham10000`
+- `ham10000_b0`
+- `ddi`
 
 ## Tests
 
@@ -151,16 +177,19 @@ cd frontend
 npm run build
 ```
 
-## Research limits
+## Current limits
 
-- HAM10000 contains dermatoscopic images. A phone photo can produce unreliable
+- The models are not clinically validated.
+- A model score is not a calibrated medical probability.
+- The models do not use medical history or other clinical information.
+- HAM10000 uses dermatoscopic images. A phone image can produce unreliable
   results.
-- A high model score does not mean that a prediction is medically correct.
-- The deployed models do not use patient history or clinical context.
-- The current application does not yet report validated performance by skin-tone
-  group.
+- DDI uses clinical images. Its image format differs from HAM10000.
+- The current DDI evaluation does not report results by skin-tone group.
+- The DDI training split can contain augmented versions of the same source
+  image in different partitions.
 
-## Data and references
+## Data
 
 - [HAM10000 dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
 - [HAM10000 paper](https://doi.org/10.1038/sdata.2018.161)
@@ -169,7 +198,7 @@ npm run build
 
 ## Team
 
-This project was developed by AI4ALL Ignite Group 17A:
+AI4ALL Ignite Group 17A:
 
 Avani Joshi, Daisy Phung, Phuong Hoang, Tigist Wujira, William Acosta Lora,
 Belyse Munezero, and Bogning Guy-Robert.

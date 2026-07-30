@@ -58,7 +58,8 @@ function Sources() {
               </p>
               <p>
                 ISIC provides a large repository of dermoscopic images with reference diagnoses.
-                It is a research reference for this project. The deployed models use HAM10000.
+                It is a research reference for this project. The deployed models use HAM10000
+                and DDI.
               </p>
               <div className="source-link">
                 <a href="https://www.kaggle.com/datasets/andrewmvd/isic-2019" target="_blank" rel="noopener noreferrer">

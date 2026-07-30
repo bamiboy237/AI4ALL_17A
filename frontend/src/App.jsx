@@ -21,6 +21,10 @@ const AVAILABLE_MODELS = {
     name: 'EfficientNet-B0',
     classes: 7,
   },
+  ddi: {
+    name: 'DDI CNN',
+    classes: 16,
+  },
 };
 
 function App() {

@@ -14,7 +14,7 @@ from PIL import Image
 
 app = FastAPI(
     title="DermAware API",
-    description="Research API for seven-class skin-lesion image classification.",
+    description="Research API for skin-lesion image classification.",
 )
 
 ALLOWED_ORIGINS = [
@@ -35,8 +35,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODEL_PATHS = {
     "ham10000": os.path.join(BASE_DIR, "ham10000_cnn_improved.keras"),
     "ham10000_b0": os.path.join(BASE_DIR, "ham10000_efficientnet_b0.keras"),
-    # DDI is disabled until its 16-class training label mapping is restored.
-    # "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
+    "ddi": os.path.join(BASE_DIR, "ddi_cnn_improved.keras"),
 }
 FRONTEND_BUILD_DIR = Path(BASE_DIR) / "frontend" / "build"
 API_PREFIX = "/api"
@@ -44,18 +43,58 @@ MAX_UPLOAD_BYTES = int(os.getenv("MAX_UPLOAD_BYTES", "4500000"))
 MODEL_LOCK = Lock()
 
 HAM10000_CLASSES = {
-    0: "Melanoma",
-    1: "Melanocytic nevus",
-    2: "Basal cell carcinoma",
-    3: "Actinic keratosis",
-    4: "Benign keratosis",
-    5: "Dermatofibroma",
+    0: "Actinic keratosis",
+    1: "Basal cell carcinoma",
+    2: "Benign keratosis",
+    3: "Dermatofibroma",
+    4: "Melanocytic nevus",
+    5: "Melanoma",
     6: "Vascular lesion",
 }
 
 DDI_CLASSES = {
-    0: "Melanoma",
-    1: "Non-melanoma (Benign)",
+    0: "Actinic keratosis",
+    1: "Adnexal tumor",
+    2: "Basal cell carcinoma",
+    3: "Benign keratosis",
+    4: "Other benign lesion",
+    5: "Dermatofibroma",
+    6: "Infection",
+    7: "Inflammatory condition",
+    8: "Melanocytic nevus",
+    9: "Melanoma",
+    10: "Other malignancy",
+    11: "Other or miscellaneous",
+    12: "Physical or traumatic lesion",
+    13: "Soft-tissue tumor",
+    14: "Squamous cell carcinoma",
+    15: "Vascular lesion",
+}
+
+MODEL_CLASSES = {
+    "ham10000": HAM10000_CLASSES,
+    "ham10000_b0": HAM10000_CLASSES,
+    "ddi": DDI_CLASSES,
+}
+
+MODEL_DETAILS = {
+    "ham10000": {
+        "name": "HAM10000 CNN",
+        "dataset": "HAM10000",
+    },
+    "ham10000_b0": {
+        "name": "EfficientNet-B0",
+        "dataset": "HAM10000",
+    },
+    "ddi": {
+        "name": "DDI CNN",
+        "dataset": "Diverse Dermatology Images",
+    },
+}
+
+STANDARDIZATION = {
+    "ham10000": (159.83858404060575, 46.347782320788426),
+    "ddi": (125.3272191837383, 62.37661912263565),
 }
 
 models = {}
@@ -76,13 +115,13 @@ def load_model(model_name: str):
     models.clear()
     tf.keras.backend.clear_session()
     gc.collect()
-    models[model_name] = tf.keras.models.load_model(model_path)
+    models[model_name] = tf.keras.models.load_model(model_path, compile=False)
     print(f"✓ Loaded {model_name} model")
     return models[model_name]
 
 
 def preprocess_image(image: Image.Image, model_name: str = "ham10000") -> np.ndarray:
-    """Preprocess image for model prediction."""
+    """Prepare an image with the preprocessing used during model training."""
     input_shape = models[model_name].input_shape
     if not isinstance(input_shape, tuple) or len(input_shape) != 4:
         raise ValueError(f"Unsupported input shape for {model_name}: {input_shape}")
@@ -93,49 +132,48 @@ def preprocess_image(image: Image.Image, model_name: str = "ham10000") -> np.nda
 
     target_size: Tuple[int, int] = (width, height)  # PIL uses (width, height)
 
-    # Resize image
     image = image.resize(target_size, Image.Resampling.LANCZOS)
 
-    # Convert to RGB if grayscale
     if image.mode != "RGB":
         image = image.convert("RGB")
 
-    # Convert to numpy array and normalize
     img_array = np.array(image, dtype=np.float32)
-    img_array = img_array / 255.0
 
-    # HAM ANN model requires flattened input
-    if model_name == "ham_ann":
-        img_array = img_array.flatten()
-        return np.expand_dims(img_array, axis=0)
+    if model_name in STANDARDIZATION:
+        mean, standard_deviation = STANDARDIZATION[model_name]
+        img_array = (img_array - mean) / standard_deviation
+    elif model_name != "ham10000_b0":
+        raise ValueError(f"Unsupported preprocessing for model: {model_name}")
 
-    # CNN models use 4D input (batch, height, width, channels)
     return np.expand_dims(img_array, axis=0)
 
 
-def get_benign_malignant_class(model_name: str, predictions: np.ndarray) -> tuple:
-    """Convert model predictions to benign/malignant classification."""
-    if model_name == "ddi":
-        # DDI model directly outputs benign (1) or malignant (0)
-        pred_class = np.argmax(predictions[0])
-        confidence = float(predictions[0][pred_class])
-        return (
-            "Melanoma (Malignant)" if pred_class == 0 else "Non-melanoma (Benign)",
-            confidence,
+def get_prediction_summary(model_name: str, predictions: np.ndarray) -> tuple:
+    """Return the display label, highest score, and result style."""
+    classes = MODEL_CLASSES[model_name]
+    scores = predictions[0]
+
+    if len(scores) != len(classes):
+        raise ValueError(
+            f"{model_name} returned {len(scores)} scores for {len(classes)} labels."
         )
 
-    elif model_name in ("ham10000", "ham10000_b0"):
-        # HAM10000: Classes 0, 2, 3 are malignant; 1, 4, 5, 6 are benign
-        malignant_classes = {0, 2, 3}  # Melanoma, BCC, Actinic keratosis
-        pred_class = np.argmax(predictions[0])
-        confidence = float(predictions[0][pred_class])
+    predicted_index = int(np.argmax(scores))
+    confidence = float(scores[predicted_index])
 
-        is_malignant = pred_class in malignant_classes
+    if model_name == "ddi":
+        return (classes[predicted_index], confidence, "neutral")
+
+    if model_name in ("ham10000", "ham10000_b0"):
+        malignant_classes = {0, 1, 5}
+        is_malignant = predicted_index in malignant_classes
         classification = (
             "Malignant (Requires Medical Attention)" if is_malignant else "Benign"
         )
+        result_type = "malignant" if is_malignant else "benign"
+        return (classification, confidence, result_type)
 
-        return (classification, confidence)
+    raise ValueError(f"Unsupported model: {model_name}")
 
 
 @app.get(f"{API_PREFIX}/health")
@@ -156,16 +194,11 @@ async def get_available_models() -> Dict:
         "available_models": list(MODEL_PATHS.keys()),
         "loaded_models": list(models.keys()),
         "models": {
-            "ham10000": {
-                "name": "HAM10000 CNN",
-                "dataset": "HAM10000 (10,000 skin images)",
-                "classes": len(HAM10000_CLASSES),
-            },
-            "ham10000_b0": {
-                "name": "EfficientNet-B0",
-                "dataset": "HAM10000 (10,000 skin images)",
-                "classes": len(HAM10000_CLASSES),
-            },
+            model_name: {
+                **MODEL_DETAILS[model_name],
+                "classes": len(MODEL_CLASSES[model_name]),
+            }
+            for model_name in MODEL_PATHS
         },
     }
 
@@ -211,11 +244,11 @@ async def predict(
             processed_image = preprocess_image(image, model_name=model)
             predictions = loaded_model.predict(processed_image, verbose=0)
 
-        # Get classification
-        classification, confidence = get_benign_malignant_class(model, predictions)
+        classification, confidence, result_type = get_prediction_summary(
+            model, predictions
+        )
 
-        # Get detailed predictions
-        classes_dict = DDI_CLASSES if model == "ddi" else HAM10000_CLASSES
+        classes_dict = MODEL_CLASSES[model]
         detailed_predictions = {
             classes_dict[i]: float(predictions[0][i])
             for i in range(len(predictions[0]))
@@ -226,6 +259,7 @@ async def predict(
             "model": model,
             "classification": classification,
             "confidence": confidence,
+            "result_type": result_type,
             "detailed_predictions": detailed_predictions,
             "warning": "This prediction should not be used for medical diagnosis. Consult a dermatologist for professional evaluation.",
         }
@@ -264,9 +298,11 @@ async def predict_batch(
                 processed_image = preprocess_image(image, model_name=model)
                 predictions = loaded_model.predict(processed_image, verbose=0)
 
-            classification, confidence = get_benign_malignant_class(model, predictions)
+            classification, confidence, result_type = get_prediction_summary(
+                model, predictions
+            )
 
-            classes_dict = DDI_CLASSES if model == "ddi" else HAM10000_CLASSES
+            classes_dict = MODEL_CLASSES[model]
             detailed_predictions = {
                 classes_dict[i]: float(predictions[0][i])
                 for i in range(len(predictions[0]))
@@ -277,6 +313,7 @@ async def predict_batch(
                     "filename": file.filename,
                     "classification": classification,
                     "confidence": confidence,
+                    "result_type": result_type,
                     "detailed_predictions": detailed_predictions,
                 }
             )
