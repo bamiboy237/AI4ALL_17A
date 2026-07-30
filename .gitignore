@@ -12,6 +12,8 @@ frontend/build/
 frontend/dist/
 
 # Backend
+__pycache__/
+*.py[cod]
 backend/__pycache__/
 backend/*.py[cod]
 backend/*$py.class
@@ -42,13 +44,11 @@ Thumbs.db
 .env.local
 .env.*.local
 
-# Models (optional - only ignore if storing separately)
-# *.keras
+# Models are tracked with Git LFS. See .gitattributes.
 
-#
 .claude
 
-# 
+# Retired generated deployment notes
 DEPLOYMENT.md
 DEPLOY_VERCEL.md
 FINAL_SUMMARY.md

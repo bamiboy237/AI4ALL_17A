@@ -14,7 +14,7 @@ from PIL import Image
 
 app = FastAPI(
     title="DermAware API",
-    description="API for classifying skin lesions as benign or malignant using HAM10000 and DDI datasets",
+    description="Research API for seven-class skin-lesion image classification.",
 )
 
 ALLOWED_ORIGINS = [
@@ -197,16 +197,7 @@ async def predict(
     file: UploadFile = File(...),
     model: str = Form("ham10000"),
 ) -> Dict:
-    """
-    Predict if a skin lesion is benign or malignant.
-
-    Args:
-        file: Image file of the skin lesion
-        model: Model to use ("ham10000" or "ddi")
-
-    Returns:
-        Classification result with confidence scores
-    """
+    """Return research-model scores for one uploaded image."""
     if model not in MODEL_PATHS:
         raise HTTPException(
             status_code=400,

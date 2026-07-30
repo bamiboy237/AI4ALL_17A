@@ -37,12 +37,12 @@ function Sources() {
             <div className="subsection">
               <h3>Diverse Dermatology Images (DDI)</h3>
               <p className="source-meta">
-                Groh et al., Stanford AI Index
+                Daneshjou et al., Stanford Center for Artificial Intelligence in Medicine and Imaging
               </p>
               <p>
                 The DDI dataset was created specifically to address skin tone representation gaps in
-                dermatology datasets. It contains dermatoscopic images with diverse representation
-                across Fitzpatrick skin tone groups.
+                dermatology datasets. It contains clinical images with diverse representation
+                across skin-tone groups.
               </p>
               <div className="source-link">
                 <a href="https://stanfordaimi.azurewebsites.net/datasets/35866158-8196-48d8-87bf-50dca81df965" target="_blank" rel="noopener noreferrer">
@@ -57,8 +57,8 @@ function Sources() {
                 International Skin Imaging Collaboration
               </p>
               <p>
-                ISIC provides a large repository of dermoscopic images with ground truth diagnoses.
-                Used for benchmarking and additional model evaluation.
+                ISIC provides a large repository of dermoscopic images with reference diagnoses.
+                It is a research reference for this project. The deployed models use HAM10000.
               </p>
               <div className="source-link">
                 <a href="https://www.kaggle.com/datasets/andrewmvd/isic-2019" target="_blank" rel="noopener noreferrer">
@@ -93,13 +93,13 @@ function Sources() {
                 <li>
                   Esteva, A., Kuprel, B., Novoa, R. A., et al. (2017).
                   "Dermatologist-level classification of skin cancer with deep neural networks."
-                  <em>Nature Medicine</em>, 23(8), 923-926.
+                  <em>Nature</em>, 542, 115-118.
                 </li>
                 <li>
-                  Haenssle, H. A., Fink, C., Schneiderbauer, R., et al. (2020).
+                  Haenssle, H. A., Fink, C., Schneiderbauer, R., et al. (2018).
                   "Man against machine: diagnostic performance of a deep learning convolutional neural network
                   for dermoscopic melanoma recognition in comparison to 58 dermatologists."
-                  <em>Annals of Oncology</em>, 31(4), 540-547.
+                  <em>Annals of Oncology</em>, 29(8), 1836-1842.
                 </li>
               </ul>
             </div>

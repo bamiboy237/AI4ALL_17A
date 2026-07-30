@@ -49,7 +49,10 @@ function PredictionResult({ prediction, onReset }) {
         </div>
 
         <div className="note">
-          <p>This analysis is for clinical reference. Always consult a dermatologist.</p>
+          <p>
+            This result is a model output, not a diagnosis. Contact a qualified
+            healthcare professional if you have a concern.
+          </p>
         </div>
 
         <button className="action-button" onClick={onReset}>

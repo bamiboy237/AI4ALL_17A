@@ -79,7 +79,7 @@ function App() {
             <div className="container">
               <header className="header">
                 <h1>DermAware</h1>
-                <p className="subtitle">Clinical reference tool</p>
+                <p className="subtitle">Skin-lesion classification research prototype</p>
               </header>
 
               <div className="workspace">
@@ -129,8 +129,8 @@ function App() {
           <footer className="footer">
             <div className="container">
               <p>
-                This tool is for clinical reference and research only.
-                Always consult a dermatologist for diagnosis.
+                This research prototype is not a medical device.
+                Do not use its output for diagnosis or treatment.
               </p>
             </div>
           </footer>
