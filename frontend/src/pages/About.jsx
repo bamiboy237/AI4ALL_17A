@@ -14,9 +14,9 @@ function About() {
           <section className="content-section">
             <h2>Purpose</h2>
             <p>
-              DermAware compares two image-classification models that were trained
-              on HAM10000. The application shows model scores for seven lesion
-              classes. It does not provide a medical diagnosis.
+              DermAware compares image-classification models trained with
+              HAM10000 and Diverse Dermatology Images. The application shows
+              model scores. It does not provide a medical diagnosis.
             </p>
           </section>
 
@@ -38,6 +38,15 @@ function About() {
                 from ImageNet and adapts them to the same seven HAM10000 classes.
               </p>
             </div>
+
+            <div className="subsection">
+              <h3>DDI CNN</h3>
+              <p>
+                This custom convolutional neural network returns scores for 16
+                project-defined disease groups. It was trained with clinical
+                images from the DDI dataset.
+              </p>
+            </div>
           </section>
 
           <section className="content-section">
@@ -56,9 +65,9 @@ function About() {
             <p>
               The wider project studies how dataset representation can affect
               model performance across skin tones. The team uses Diverse
-              Dermatology Images (DDI) for this analysis. DDI inference is not
-              active in the current web application because its label mapping
-              still requires verification.
+              Dermatology Images (DDI) for this analysis. The DDI model is
+              available in the application, but the current evaluation does not
+              report results by skin-tone group.
             </p>
           </section>
 

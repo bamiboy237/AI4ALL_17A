@@ -35,6 +35,10 @@
   border-left: 3px solid var(--color-success);
 }
 
+.result-card.neutral {
+  border-left: 3px solid var(--color-accent);
+}
+
 .result-header {
   display: flex;
   flex-direction: column;
@@ -62,6 +66,11 @@
 .badge.benign {
   background: rgba(74, 124, 89, 0.1);
   color: var(--color-success);
+}
+
+.badge.neutral {
+  background: var(--color-accent-light);
+  color: var(--color-accent);
 }
 
 .confidence-display {

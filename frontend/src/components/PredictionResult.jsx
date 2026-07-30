@@ -2,7 +2,9 @@ import React from 'react';
 import './PredictionResult.css';
 
 function PredictionResult({ prediction, onReset }) {
-  const isMalignant = prediction.classification.includes('Malignant');
+  const resultType = prediction.result_type || (
+    prediction.classification.includes('Malignant') ? 'malignant' : 'benign'
+  );
   const confidencePercent = (prediction.confidence * 100).toFixed(0);
 
   const detailedPredictions = Object.entries(prediction.detailed_predictions || {})
@@ -11,15 +13,15 @@ function PredictionResult({ prediction, onReset }) {
 
   return (
     <div className="prediction-result">
-      <div className={`result-card ${isMalignant ? 'malignant' : 'benign'}`}>
+      <div className={`result-card ${resultType}`}>
         <div className="result-header">
           <div className="classification-display">
-            <span className={`badge ${isMalignant ? 'malignant' : 'benign'}`}>
+            <span className={`badge ${resultType}`}>
               {prediction.classification}
             </span>
           </div>
           <div className="confidence-display">
-            <div className="confidence-label">Confidence</div>
+            <div className="confidence-label">Model score</div>
             <div className="confidence-bar">
               <div
                 className="confidence-fill"
