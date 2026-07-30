@@ -157,10 +157,8 @@ npm run build
   results.
 - A high model score does not mean that a prediction is medically correct.
 - The deployed models do not use patient history or clinical context.
-- The current application does not report validated performance by skin-tone
+- The current application does not yet report validated performance by skin-tone
   group.
-- DDI remains part of the fairness study, but its model is not active in the
-  deployed application.
 
 ## Data and references
 
