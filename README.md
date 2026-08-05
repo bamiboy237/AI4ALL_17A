@@ -17,15 +17,7 @@ To do this, we trained three models with two datasets:
 
 ## What we are investigating
 
-Medical-image datasets do not represent every population equally. A model can
-learn this imbalance and perform differently across groups.
-
-Our research question is:
-
-> How does dataset composition affect a CNN that categorizes skin-lesion images?
-
-HAM10000 and DDI have different images and label spaces. We evaluate each model
-within its own dataset. We do not compare their test accuracy directly.
+We are investigating how sensitive machine learning models are to various skin lesions (and complexions)
 
 ## What the application does
 
@@ -36,8 +28,6 @@ The application lets you:
 - View the highest model score.
 - View the five highest class scores.
 
-The application loads a model only when it receives a prediction request. It
-keeps one model in memory at a time.
 
 ## Models
 
