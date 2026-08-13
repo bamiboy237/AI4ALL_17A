@@ -15,9 +15,9 @@ To do this, we trained three models with two datasets:
 > diagnosis or treatment advice. Contact a qualified healthcare professional
 > if you have a concern about a skin lesion.
 
-## What we are investigating
-
-We are investigating how sensitive machine learning models are to various skin lesions (and complexions)
+## Project Summary
+Categorizing and analyzing skin lesion types by using machine learning and computer vision, in order to accelerating the diagnosis of skin cancer condition. Applying CNN, ANN, and EfficientNet algorithms, the project will evaluate the Diverse Dermatology Images (DDI) and HAM10000 datasets to classify dermatological conditions across individuals with diverse skin tones.
+By analyzing model accuracy across diverse patient groups and exploring methods to reduce bias, our project aims to contribute to the development of a fair and more reliable model for the healthcare industry.
 
 ## What the application does
 
@@ -28,7 +28,9 @@ The application lets you:
 - View the highest model score.
 - View the five highest class scores.
 
-
+## Training Data
+- HAM10000 (10,015 dermatoscopic images across 7 lesion categories, collected at the Medical University of Vienna). HAM10000 will serve as the primary training set given its size and quality
+- Diverse Dermatology Images (DDI) dataset (656 clinical photographs from 578 patients, curated by Stanford AIMI specifically to improve the representation of darker skin types. DDI will be expanded through data augmentation to address its small size and class imbalance, allowing us to evaluate model performance across both light and dark skin tones.
 ## Models
 
 | Model | Training data | Output |
@@ -167,7 +169,7 @@ cd frontend
 npm run build
 ```
 
-## Current limits
+## Current Limits &Next Steps
 
 - The models are not clinically validated.
 - A model score is not a calibrated medical probability.
@@ -179,12 +181,38 @@ npm run build
 - The DDI training split can contain augmented versions of the same source
   image in different partitions.
 
-## Data
-
+## Citations and Data Sources
 - [HAM10000 dataset](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)
 - [HAM10000 paper](https://doi.org/10.1038/sdata.2018.161)
 - [Diverse Dermatology Images](https://stanfordaimi.azurewebsites.net/datasets/35866158-8196-48d8-87bf-50dca81df965)
 - [DDI paper](https://doi.org/10.1126/sciadv.abq6147)
+1. Abadi, M., Barham, P., Chen, J., Chen, Z., Davis, A., Dean, J., … Wicke, M. (2016). TensorFlow: A system for large-scale machine learning. OSDI ’16.
+https://www.usenix.org/system/files/conference/osdi16/osdi16-abadi.pdf
+
+
+2. AI Dermatologist. (2025). AI Dermatologist: Skin scanner. Ai-Derm.com.
+https://ai-derm.com
+
+3. Alipour, N., Burke, T., & Courtney, J. (2024). Skin type diversity in skin lesion datasets: A review. Current Dermatology Reports, 13(3), 198–210.
+https://doi.org/10.1007/s13671-024-00440-0
+
+
+4. Cleveland Clinic. (2022, October 17). Skin lesions: What they are, types, causes & treatment. Cleveland Clinic.
+https://my.clevelandclinic.org/health/diseases/24296-skin-lesions
+Tschandl, P., Rosendahl, C., & Kittler, H. (2018). The HAM10000 data
+set, a large collection of multi-source dermatoscopic images of common pigmented skin lesions. Scientific Data, 5, 180161.
+ https://doi.org/10.1038/sdata.2018.161
+
+4. Daneshjou, R., Vodrahalli, K., Novoa, R. A., Jenkins, M., Liang, W., Rotemberg, V., … Chiou, A. S. (2022). Disparities in dermatology AI performance on a diverse, curated clinical image set. Science Advances, 8(32), eabq6147.
+ https://doi.org/10.1126/sciadv.abq6147
+
+6. Esteva, A., Kuprel, B., Novoa, R. A., Ko, J., Swetter, S. M., Blau, H. M., & Thrun, S. (2017). Dermatologist-level classification of skin cancer with deep neural networks. Nature, 542(7639), 115–118.
+ https://doi.org/10.1038/nature21056
+
+7. Tan, M., & Le, Q. V. (2019). EfficientNet: Rethinking model scaling for convolutional neural networks. Proceedings of the 36th International Conference on Machine Learning (ICML 2019), 6105–6114.
+ https://proceedings.mlr.press/v97/tan19a.html
+
+
 
 ## Team
 
