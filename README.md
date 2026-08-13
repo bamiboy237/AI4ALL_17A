@@ -19,18 +19,11 @@ To do this, we trained three models with two datasets:
 Categorizing and analyzing skin lesion types by using machine learning and computer vision, in order to accelerating the diagnosis of skin cancer condition. Applying CNN, ANN, and EfficientNet algorithms, the project will evaluate the Diverse Dermatology Images (DDI) and HAM10000 datasets to classify dermatological conditions across individuals with diverse skin tones.
 By analyzing model accuracy across diverse patient groups and exploring methods to reduce bias, our project aims to contribute to the development of a fair and more reliable model for the healthcare industry.
 
-## What the application does
-
-The application lets you:
-
-- Upload one JPEG, PNG, GIF, or WebP image up to 4.5 MB.
-- Choose one of the three trained models.
-- View the highest model score.
-- View the five highest class scores.
 
 ## Training Data
 - HAM10000 (10,015 dermatoscopic images across 7 lesion categories, collected at the Medical University of Vienna). HAM10000 will serve as the primary training set given its size and quality
 - Diverse Dermatology Images (DDI) dataset (656 clinical photographs from 578 patients, curated by Stanford AIMI specifically to improve the representation of darker skin types. DDI will be expanded through data augmentation to address its small size and class imbalance, allowing us to evaluate model performance across both light and dark skin tones.
+  
 ## Models
 
 | Model | Training data | Output |
@@ -45,8 +38,15 @@ EfficientNet-B0 performs its own input rescaling.
 The 16 DDI groups include an `Other or miscellaneous` output. This output
 preserves the class order used when the saved model was trained.
 
-## How a request moves through the system
+## What the application does
+The application lets you:
 
+- Upload one JPEG, PNG, GIF, or WebP image up to 4.5 MB.
+- Choose one of the three trained models.
+- View the highest model score.
+- View the five highest class scores.
+
+## How a request moves through the system
 1. The React client checks the selected file.
 2. The client sends the image and model name to the FastAPI endpoint.
 3. The API validates and resizes the image.
@@ -169,8 +169,7 @@ cd frontend
 npm run build
 ```
 
-## Current Limits &Next Steps
-
+## Current Limits & Next Steps
 - The models are not clinically validated.
 - A model score is not a calibrated medical probability.
 - The models do not use medical history or other clinical information.
