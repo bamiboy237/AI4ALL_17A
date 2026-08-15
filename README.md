@@ -26,17 +26,78 @@ By analyzing model accuracy across diverse patient groups and exploring methods 
   
 ## Models
 
-| Model | Training data | Output |
-| --- | --- | --- |
-| HAM10000 CNN | HAM10000 dermatoscopic images | 7 lesion categories |
-| EfficientNet-B0 | HAM10000 dermatoscopic images | 7 lesion categories |
-| DDI CNN | DDI clinical images | 16 project-defined disease groups |
+| Model | Training Data | Architecture | Input Shape | Output Classes |
+| --- | --- | --- | --- | --- |
+| **HAM10000 CNN** | HAM10000 (10,015 images) | Custom CNN | 224×224 RGB | 7 lesion types |
+| **EfficientNet-B0** | HAM10000 (10,015 images) | Transfer learning (ImageNet pretrained) | 224×224 RGB | 7 lesion types |
+| **DDI CNN** | Diverse Dermatology Images (656 images + augmentation) | Custom CNN | 224×224 RGB | 16 disease groups |
 
-The custom CNNs use the mean and standard deviation recorded during training.
-EfficientNet-B0 performs its own input rescaling.
+### Model Details
 
-The 16 DDI groups include an `Other or miscellaneous` output. This output
-preserves the class order used when the saved model was trained.
+#### HAM10000 CNN
+- **Why this model**: Custom CNN trained from scratch on dermatoscopic images, serving as a baseline to understand what features the network learns directly from the task-specific data without ImageNet transfer.
+- **Data split**: Stratified by diagnosis, grouped by lesion_id to prevent data leakage (images of the same lesion cannot appear in train/val/test)
+- **Augmentation**: Random horizontal flip, rotation (±20°), brightness/contrast adjustments
+- **Preprocessing**: Resize to 224×224, normalize using mean/std computed on training set
+
+#### EfficientNet-B0
+- **Why this model**: Transfer learning leverages features learned from ImageNet (1.2M images, diverse natural objects). Efficient architecture (smaller parameter count) with strong empirical performance on medical imaging tasks.
+- **Training strategy**: Two-stage fine-tuning
+  - Stage 1: Freeze base layers, train classification head only (15 epochs)
+  - Stage 2: Unfreeze top 30 base layers, fine-tune entire network (15 epochs)
+- **Data split**: Same as HAM10000 CNN (stratified, lesion-grouped)
+- **Preprocessing**: Resize to 224×224. Note: EfficientNet performs its own input rescaling internally.
+
+#### DDI CNN
+- **Why this model**: Trained on Diverse Dermatology Images (curated for diverse skin tone representation). Addresses representation gap in HAM10000 (which is skewed toward light skin tones). Uses a larger output space (16 disease groups) reflecting real-world diagnostic complexity.
+- **Data challenge**: DDI is smaller (656 images) compared to HAM10000 (10,015). Addressed through data augmentation.
+- **Target classes**: 16 project-defined groups including "Other or miscellaneous" to preserve unclassified cases
+- **Preprocessing**: Same as HAM10000 CNN (224×224, normalize by training set mean/std)
+
+## Evaluation & Results
+
+See the **[Evaluation page](https://ai-4-all-17-a.vercel.app/evaluation)** in the application for interactive performance visualizations, metrics tables, and fairness analysis by skin tone.
+
+### Key Visuals
+
+| Figure | Description |
+| --- | --- |
+| **HAM10000 Distribution** | Class balance across 7 lesion categories. Melanocytic nevus (NV) is ~50%; melanoma (MEL) is ~10%. |
+| **Confusion Matrices** | Raw and normalized confusion matrices for each model, showing which classes are confused with each other. |
+| **Per-Class Metrics** | Precision, recall, and F1-score for each lesion category. Highlights classes where models struggle. |
+| **Model Comparison** | Side-by-side accuracy, F1-score, and balanced accuracy for HAM10000 CNN, EfficientNet-B0, and DDI CNN. |
+
+### Test Set Performance
+
+**EfficientNet-B0 (HAM10000 test set):**
+- Test Accuracy: [TODO: fill from training]
+- Macro F1-Score: [TODO: fill from training]
+- Balanced Accuracy: [TODO: fill from training]
+- Macro ROC-AUC: [TODO: fill from training]
+
+**HAM10000 CNN (HAM10000 test set):**
+- Test Accuracy: [TODO: fill from training]
+- Macro F1-Score: [TODO: fill from training]
+- Balanced Accuracy: [TODO: fill from training]
+- Macro ROC-AUC: [TODO: fill from training]
+
+**DDI CNN (DDI test set):**
+- Test Accuracy: [TODO: fill from training]
+- Macro F1-Score: [TODO: fill from training]
+- Balanced Accuracy: [TODO: fill from training]
+
+### Fairness & Skin Tone Analysis
+
+The current evaluation **does not yet report results stratified by skin-tone group** (e.g., Fitzpatrick categories).
+This is the highest-priority next step. If Fitzpatrick labels are available in the DDI metadata:
+
+**Planned metrics:**
+- Accuracy of HAM10000 CNN on light (FST I–III) vs. dark (FST IV–VI) skin tones
+- Accuracy of DDI CNN on light vs. dark skin tones
+- Accuracy gap and disparity measures
+- Per-class fairness analysis (e.g., does melanoma detection disparities vary by skin tone?)
+
+To generate these results, see `scripts/generate_evaluation_metrics.py`.
 
 ## What the application does
 The application lets you:
@@ -168,6 +229,31 @@ Build the frontend:
 cd frontend
 npm run build
 ```
+
+## Generate Evaluation Metrics
+
+To evaluate models on test data and produce confusion matrices, per-class metrics, and fairness analysis:
+
+```bash
+python scripts/generate_evaluation_metrics.py
+```
+
+This script generates:
+- CSV files with overall metrics (accuracy, F1, balanced accuracy, ROC-AUC)
+- CSV files with per-class metrics (precision, recall, F1-score per lesion category)
+- Confusion matrix PNG charts (raw counts and normalized)
+- Per-class performance bar charts (PNG)
+- Fairness metrics by skin tone group (if Fitzpatrick labels available in DDI metadata)
+
+**Output directory**: `evaluation_results/`
+
+**Note**: The script currently has template structure. To run it fully:
+1. Provide HAM10000 test data loading (images, labels, metadata)
+2. Provide DDI test data loading (images, labels, Fitzpatrick groups if available)
+3. Uncomment the evaluation function calls in the script
+4. Run the script to populate metrics
+
+See `scripts/generate_evaluation_metrics.py` for detailed implementation and comments.
 
 ## Current Limits & Next Steps
 - The models are not clinically validated.

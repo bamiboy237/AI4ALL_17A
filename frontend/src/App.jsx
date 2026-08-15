@@ -6,6 +6,7 @@ import PredictionResult from './components/PredictionResult';
 import ModelSelector from './components/ModelSelector';
 import About from './pages/About';
 import Sources from './pages/Sources';
+import Evaluation from './pages/Evaluation';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || (
@@ -143,6 +144,7 @@ function App() {
 
       {currentPage === 'about' && <About />}
       {currentPage === 'sources' && <Sources />}
+      {currentPage === 'evaluation' && <Evaluation />}
     </div>
   );
 }

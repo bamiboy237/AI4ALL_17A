@@ -50,6 +50,12 @@ function Navigation({ currentPage, onNavigate }) {
           >
             Sources
           </button>
+          <button
+            className={`nav-link ${currentPage === 'evaluation' ? 'active' : ''}`}
+            onClick={() => handleNavClick('evaluation')}
+          >
+            Evaluation
+          </button>
         </div>
       </div>
     </nav>
