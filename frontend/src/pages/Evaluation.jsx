@@ -50,12 +50,16 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Figure 2: Training Curves</h3>
+              <h3>Figure 2: Training History</h3>
               <img
                 src="/ham100annperformance.png"
-                alt="Figure 2. ANN baseline training curves showing accuracy and loss over epochs."
+                alt="Figure 2. ANN baseline training history showing accuracy and loss over epochs."
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
               />
+              <p>
+                Training curves show learning progression across epochs. Accuracy increases while loss decreases,
+                indicating successful model learning.
+              </p>
             </div>
 
             <div className="subsection">
@@ -108,10 +112,22 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Figure 3: Confusion Matrix</h3>
+              <h3>Figure 3: Training History</h3>
+              <img
+                src="/ham10000cnn.png"
+                alt="Figure 3. HAM10000 CNN training history showing accuracy and loss progression."
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
+              />
+              <p>
+                Training curves demonstrate model convergence, with validation accuracy plateauing as the model approaches optimal performance.
+              </p>
+            </div>
+
+            <div className="subsection">
+              <h3>Figure 4: Confusion Matrix</h3>
               <img
                 src="/hamconfusion.png"
-                alt="Figure 3. HAM10000 CNN confusion matrix on test set showing classification performance across 7 lesion categories."
+                alt="Figure 4. HAM10000 CNN confusion matrix on test set showing classification performance across 7 lesion categories."
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
               />
               <p>
@@ -169,10 +185,22 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Figure 4: Confusion Matrix</h3>
+              <h3>Figure 5: Training History</h3>
+              <img
+                src="/ddicnn.png"
+                alt="Figure 5. DDI CNN training history showing accuracy and loss over epochs."
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
+              />
+              <p>
+                Training on the diverse DDI dataset shows steady improvement with strong convergence to high accuracy levels.
+              </p>
+            </div>
+
+            <div className="subsection">
+              <h3>Figure 6: Confusion Matrix</h3>
               <img
                 src="/ddiconfusion.png"
-                alt="Figure 4. DDI CNN confusion matrix on test set showing performance across 16 disease groups."
+                alt="Figure 6. DDI CNN confusion matrix on test set showing performance across 16 disease groups."
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
               />
               <p>
@@ -219,10 +247,10 @@ function Evaluation() {
             <h2>Model Comparison</h2>
 
             <div className="subsection">
-              <h3>Figure 5: Performance Comparison</h3>
+              <h3>Figure 7: Performance Comparison</h3>
               <img
                 src="/allmodels.png"
-                alt="Figure 5. Side-by-side comparison of all three models showing test accuracy, precision, recall, and loss."
+                alt="Figure 7. Side-by-side comparison of all three models showing test accuracy, precision, recall, and loss."
                 style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
               />
             </div>
