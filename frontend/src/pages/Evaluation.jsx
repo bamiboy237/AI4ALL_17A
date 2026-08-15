@@ -11,6 +11,12 @@ function Evaluation() {
         </header>
 
         <div className="page-content">
+          <section className="content-section" style={{ backgroundColor: '#f5f5f5', padding: '1.5rem', borderRadius: '8px', marginBottom: '2rem' }}>
+            <p style={{ margin: 0, color: '#666', fontSize: '0.95rem' }}>
+              <strong>Detailed quantitative metrics are being compiled from training runs.</strong> This page presents the visual analysis and technical framework. Complete benchmark results (accuracy, F1-score, per-class metrics) will be published upon final model evaluation.
+            </p>
+          </section>
+
           {/* ============================================================== */}
           {/* HAM10000 DATASET OVERVIEW */}
           {/* ============================================================== */}
@@ -73,119 +79,24 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Test Set Metrics</h3>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Test Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Macro F1-Score</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Balanced Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>Macro ROC-AUC (OvR)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-              <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                Test set size: [TODO: # images]. Evaluation on held-out test set (stratified, lesion-disjoint from train/val).
+              <h3>Test Set Performance</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Detailed metrics being compiled. Key evaluation methodology documented below.
               </p>
             </div>
 
             <div className="subsection">
               <h3>Per-Class Performance</h3>
-              <p>
-                Precision, recall, and F1-score for each of the 7 lesion categories:
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Per-class precision, recall, and F1-score for each of the 7 lesion categories will be included upon final metric publication.
               </p>
-              <table style={{ width: '100%', marginBottom: '1rem', fontSize: '0.95rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Class</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Precision</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Recall</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>F1-Score</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Test Samples</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>AKIEC (Actinic keratosis)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>BCC (Basal cell carcinoma)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>BKL (Benign keratosis-like)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>DF (Dermatofibroma)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>MEL (Melanoma)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>NV (Melanocytic nevus)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>VASC (Vascular lesion)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
 
             <div className="subsection">
-              <h3>Interpretation</h3>
-              <p>
-                [TODO: After running evaluation, interpret results here. Key points to address:]
+              <h3>Key Findings</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Results interpretation will accompany final metric publication, including comparison to baseline and per-class analysis.
               </p>
-              <ul>
-                <li>Overall accuracy compared to baseline and other models</li>
-                <li>Classes where the model performs well (high recall for clinically important classes)</li>
-                <li>Classes where performance is weak and why (class imbalance, visual similarity)</li>
-                <li>False positive/negative patterns (e.g., how often does it misclassify melanoma?)</li>
-                <li>How transfer learning from ImageNet affects performance vs. training from scratch</li>
-              </ul>
             </div>
           </section>
 
@@ -219,45 +130,10 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Test Set Metrics</h3>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Test Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Macro F1-Score</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Balanced Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>Macro ROC-AUC (OvR)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="subsection">
-              <h3>Interpretation</h3>
-              <p>
-                [TODO: Compare custom CNN to EfficientNet-B0. Key points:]
+              <h3>Performance Analysis</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Detailed metrics and comparison with transfer learning approach will be published upon final evaluation.
               </p>
-              <ul>
-                <li>Performance gap between transfer learning vs. training from scratch</li>
-                <li>Computational cost vs. accuracy trade-off</li>
-                <li>Generalization differences (validation vs. test set)</li>
-              </ul>
             </div>
           </section>
 
@@ -290,45 +166,10 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Test Set Metrics</h3>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Test Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Macro F1-Score</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Balanced Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>Macro ROC-AUC (OvR)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO: fill from training]</strong></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="subsection">
-              <h3>Interpretation</h3>
-              <p>
-                [TODO: Analyze DDI CNN results in context of fairness. Key points:]
+              <h3>Performance & Fairness Analysis</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Evaluation results focusing on diverse representation and per-class performance will be published upon final model assessment.
               </p>
-              <ul>
-                <li>How does larger class count (16 vs. 7) affect per-class performance?</li>
-                <li>Does diverse training data improve robustness?</li>
-                <li>Which disease groups are most and least well-recognized?</li>
-              </ul>
             </div>
           </section>
 
@@ -348,40 +189,12 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Comparative Metrics</h3>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Model</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Accuracy</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Macro F1</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Classes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>HAM10000 CNN</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>7</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>EfficientNet-B0</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>7</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>DDI CNN</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>16</td>
-                  </tr>
-                </tbody>
-              </table>
+              <h3>Comparative Analysis</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Side-by-side comparison of all three models (accuracy, F1-score, balanced accuracy) will be published with final evaluation results.
+              </p>
               <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                Note: DDI CNN addresses a different classification problem (16 disease groups)
-                and is evaluated on a separate dataset focused on diverse skin tone representation.
+                Note: DDI CNN addresses a different classification problem (16 disease groups) and is evaluated on a separate dataset focused on diverse skin tone representation.
               </p>
             </div>
           </section>
@@ -413,65 +226,17 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Fairness Metrics by Skin Tone</h3>
-              <p>
-                [TODO: If Fitzpatrick groups are available, populate this table after evaluation runs]
+              <h3>Stratified Evaluation Results</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Detailed fairness analysis by Fitzpatrick skin tone group (Light FST I–III vs. Dark FST IV–VI) will be published upon completion of stratified evaluation.
               </p>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Model & Skin Tone Group</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Accuracy</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Macro F1</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Test Samples</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>EfficientNet: Light (FST I–III)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>EfficientNet: Dark (FST IV–VI)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}><strong>Accuracy Gap</strong></td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}><strong>[TODO]</strong></td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>DDI CNN: Light (FST I–III)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>DDI CNN: Dark (FST IV–VI)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>[TODO]</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
 
             <div className="subsection">
-              <h3>Key Findings & Interpretation</h3>
-              <p>
-                [TODO: After computing fairness metrics, interpret here. Key questions:]
+              <h3>Findings</h3>
+              <p style={{ color: '#999', fontStyle: 'italic' }}>
+                Comprehensive interpretation of fairness findings will be published upon final analysis.
               </p>
-              <ul>
-                <li>Do models trained on HAM10000 show disparities across skin tone groups?</li>
-                <li>Does the DDI dataset (with diverse representation) close the accuracy gap?</li>
-                <li>Are there specific lesion types where disparities are largest?</li>
-                <li>What is the practical clinical significance of observed gaps?</li>
-              </ul>
             </div>
 
             <div className="subsection">
@@ -492,25 +257,7 @@ function Evaluation() {
           {/* GENERAL INTERPRETATION & NEXT STEPS */}
           {/* ============================================================== */}
           <section className="content-section">
-            <h2>Discussion & Limitations</h2>
-
-            <div className="subsection">
-              <h3>What the Models Do Well</h3>
-              <ul>
-                <li>[TODO: Highlight strong performance on clinically important classes]</li>
-                <li>[TODO: Note classes with high recall (few false negatives)]</li>
-                <li>[TODO: Discuss generalization properties]</li>
-              </ul>
-            </div>
-
-            <div className="subsection">
-              <h3>Where Models Struggle</h3>
-              <ul>
-                <li>[TODO: Classes with low recall or precision]</li>
-                <li>[TODO: Common failure modes (e.g., misclassifications between similar conditions)]</li>
-                <li>[TODO: Potential causes: class imbalance, visual similarity, training data issues]</li>
-              </ul>
-            </div>
+            <h2>Model Analysis & Limitations</h2>
 
             <div className="subsection">
               <h3>Evaluation Methodology</h3>
