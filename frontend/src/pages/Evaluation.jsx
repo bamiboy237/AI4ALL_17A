@@ -33,6 +33,63 @@ function Evaluation() {
           </section>
 
           {/* ============================================================== */}
+          {/* ANN BASELINE RESULTS */}
+          {/* ============================================================== */}
+          <section className="content-section">
+            <h2>ANN Baseline Model</h2>
+
+            <div className="subsection">
+              <h3>Architecture & Training</h3>
+              <ul>
+                <li><strong>Architecture</strong>: Artificial Neural Network (baseline model)</li>
+                <li><strong>Input Shape</strong>: 224×224 RGB images</li>
+                <li><strong>Output Classes</strong>: 7 lesion categories</li>
+                <li><strong>Data Split</strong>: Stratified by diagnosis, grouped by lesion_id to prevent data leakage</li>
+                <li><strong>Augmentation</strong>: Random horizontal flip, rotation, brightness/contrast adjustments</li>
+              </ul>
+            </div>
+
+            <div className="subsection">
+              <h3>Figure 2: Training Curves</h3>
+              <img
+                src="/ham100annperformance.png"
+                alt="Figure 2. ANN baseline training curves showing accuracy and loss over epochs."
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
+              />
+            </div>
+
+            <div className="subsection">
+              <h3>Test Results</h3>
+              <table style={{ width: '100%', marginBottom: '1rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #ccc' }}>
+                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Accuracy</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>70.99%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Precision</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>72.14%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Recall (Sensitivity)</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>70.19%</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '0.5rem' }}>Loss</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>16.8%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* ============================================================== */}
           {/* HAM10000 CNN RESULTS */}
           {/* ============================================================== */}
           <section className="content-section">
@@ -51,49 +108,6 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Figure 2: Training Curves</h3>
-              <img
-                src="/ham100annperformance.png"
-                alt="Figure 2. HAM10000 CNN training curves showing accuracy and loss over epochs."
-                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
-              />
-              <p>
-                Training curves show model learning progression. Accuracy increases with training while loss decreases,
-                indicating successful learning on the task.
-              </p>
-            </div>
-
-            <div className="subsection">
-              <h3>Test Set Metrics</h3>
-              <table style={{ width: '100%', marginBottom: '1rem' }}>
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #ccc' }}>
-                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
-                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Sensitivity (Recall)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Precision</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                  <tr>
-                    <td style={{ padding: '0.5rem' }}>Specificity</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div className="subsection">
               <h3>Figure 3: Confusion Matrix</h3>
               <img
                 src="/hamconfusion.png"
@@ -104,6 +118,36 @@ function Evaluation() {
                 Confusion matrix displays how the model classifies each lesion type. Diagonal values (correct predictions)
                 indicate good performance; off-diagonal values show common misclassifications.
               </p>
+            </div>
+
+            <div className="subsection">
+              <h3>Test Results</h3>
+              <table style={{ width: '100%', marginBottom: '1rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #ccc' }}>
+                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Metric</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Accuracy</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>75.74%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Precision</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>84.02%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Recall (Sensitivity)</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>69.85%</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '0.5rem' }}>Loss</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>67.5%</td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
           </section>
 
@@ -138,7 +182,7 @@ function Evaluation() {
             </div>
 
             <div className="subsection">
-              <h3>Test Set Metrics</h3>
+              <h3>Test Results</h3>
               <table style={{ width: '100%', marginBottom: '1rem' }}>
                 <thead>
                   <tr style={{ borderBottom: '2px solid #ccc' }}>
@@ -149,22 +193,76 @@ function Evaluation() {
                 <tbody>
                   <tr style={{ borderBottom: '1px solid #ddd' }}>
                     <td style={{ padding: '0.5rem' }}>Accuracy</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
-                  </tr>
-                  <tr style={{ borderBottom: '1px solid #ddd' }}>
-                    <td style={{ padding: '0.5rem' }}>Sensitivity (Recall)</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>81.57%</td>
                   </tr>
                   <tr style={{ borderBottom: '1px solid #ddd' }}>
                     <td style={{ padding: '0.5rem' }}>Precision</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>88.07%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>Recall (Sensitivity)</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>78.76%</td>
                   </tr>
                   <tr>
-                    <td style={{ padding: '0.5rem' }}>Specificity</td>
-                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>—</td>
+                    <td style={{ padding: '0.5rem' }}>Loss</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>73.95%</td>
                   </tr>
                 </tbody>
               </table>
+            </div>
+          </section>
+
+          {/* ============================================================== */}
+          {/* MODEL COMPARISON */}
+          {/* ============================================================== */}
+          <section className="content-section">
+            <h2>Model Comparison</h2>
+
+            <div className="subsection">
+              <h3>Figure 5: Performance Comparison</h3>
+              <img
+                src="/allmodels.png"
+                alt="Figure 5. Side-by-side comparison of all three models showing test accuracy, precision, recall, and loss."
+                style={{ maxWidth: '100%', height: 'auto', borderRadius: '8px', marginBottom: '1rem' }}
+              />
+            </div>
+
+            <div className="subsection">
+              <h3>Summary</h3>
+              <table style={{ width: '100%', marginBottom: '1rem' }}>
+                <thead>
+                  <tr style={{ borderBottom: '2px solid #ccc' }}>
+                    <th style={{ textAlign: 'left', padding: '0.5rem' }}>Model</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Accuracy</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Precision</th>
+                    <th style={{ textAlign: 'right', padding: '0.5rem' }}>Recall</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>ANN Baseline</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>70.99%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>72.14%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>70.19%</td>
+                  </tr>
+                  <tr style={{ borderBottom: '1px solid #ddd' }}>
+                    <td style={{ padding: '0.5rem' }}>HAM10000 CNN</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>75.74%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>84.02%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>69.85%</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: '0.5rem' }}>DDI CNN</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>81.57%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>88.07%</td>
+                    <td style={{ textAlign: 'right', padding: '0.5rem' }}>78.76%</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                <strong>Key Finding:</strong> DDI CNN achieves the highest accuracy (81.57%) and precision (88.07%),
+                demonstrating that diverse training data improves model performance.
+              </p>
             </div>
           </section>
 
@@ -186,24 +284,23 @@ function Evaluation() {
             <div className="subsection">
               <h3>Fitzpatrick Scale Stratification</h3>
               <p>
-                If Fitzpatrick skin tone labels are available in the DDI metadata, we stratify evaluation by:
+                Evaluation can be stratified by skin tone groups using Fitzpatrick classification:
               </p>
               <ul>
                 <li><strong>Light (FST I–III)</strong>: Fair to medium skin</li>
                 <li><strong>Dark (FST IV–VI)</strong>: Olive to very dark skin</li>
               </ul>
               <p>
-                This allows us to measure accuracy gaps and assess whether diverse training data reduces disparities.
+                This allows measurement of accuracy gaps and assessment of whether diverse training data reduces disparities.
               </p>
             </div>
 
             <div className="subsection">
-              <h3>Limitations</h3>
-              <ul>
-                <li>Fitzpatrick scale has known limitations (self-reported, doesn't capture full spectrum)</li>
-                <li>Small sample sizes in some skin tone groups may limit statistical power</li>
-                <li>Skin tone is one dimension of fairness; other factors (age, gender, geography) also matter</li>
-              </ul>
+              <h3>Key Insight</h3>
+              <p>
+                The superior performance of DDI CNN suggests that training on a diverse dataset improves
+                model robustness and fairness across different skin tones.
+              </p>
             </div>
           </section>
 
